@@ -30,6 +30,7 @@ var listTaskCmd = &cobra.Command{
 		fmt.Printf("Open tasks (%d):\n", len(tasks.Open))
 		for _, task := range tasks.Open {
 			fmt.Println(" - " + task.TaskNm)
+			fmt.Println(task)
 		}
 
 		fmt.Printf("In progress tasks (%d):\n", len(tasks.InP))
@@ -44,7 +45,71 @@ var listTaskCmd = &cobra.Command{
 	},
 }
 
+var viewTaskCmd = &cobra.Command{
+	Use:   "view",
+	Short: "View a task",
+	Long:  `View a task`,
+	Run: func(cmd *cobra.Command, args []string) {
+		if len(args) == 0 {
+			fmt.Println("Please provide a task ID")
+			return
+		}
+
+		taskId := args[0]
+		task, err := api.GetTask(taskId)
+		if err != nil {
+			panic(err)
+		}
+
+		fmt.Println(task)
+	},
+}
+
+var updateTaskCmd = &cobra.Command{
+	Use:   "update",
+	Short: "Update a task",
+	Long:  `Update a task`,
+	Run: func(cmd *cobra.Command, args []string) {
+		cmd.Help()
+	},
+}
+
+var updateTaskContentCmd = &cobra.Command{
+	Use:   "content",
+	Short: "Update task content",
+	Long:  `Update task content`,
+	Run: func(cmd *cobra.Command, args []string) {
+		if len(args) == 0 {
+			fmt.Println("Please provide a task ID")
+			return
+		}
+
+		taskId := args[0]
+		err := api.UpdateTaskContent(taskId, "nt..")
+		if err != nil {
+			panic(err)
+		}
+
+		fmt.Println("Task content updated")
+	},
+}
+
+var createTaskCmd = &cobra.Command{
+	Use:   "create",
+	Short: "Create a task",
+	Long:  `Create a task`,
+	Run: func(cmd *cobra.Command, args []string) {
+		api.CreateTask("template", "title", "content")
+	},
+}
+
 func init() {
 	rootCmd.AddCommand(taskCmd)
+
 	taskCmd.AddCommand(listTaskCmd)
+	taskCmd.AddCommand(createTaskCmd)
+	taskCmd.AddCommand(viewTaskCmd)
+	taskCmd.AddCommand(updateTaskCmd)
+
+	updateTaskCmd.AddCommand(updateTaskContentCmd)
 }
