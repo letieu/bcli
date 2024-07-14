@@ -30,7 +30,6 @@ var listTaskCmd = &cobra.Command{
 		fmt.Printf("Open tasks (%d):\n", len(tasks.Open))
 		for _, task := range tasks.Open {
 			fmt.Println(" - " + task.TaskNm)
-			fmt.Println(task)
 		}
 
 		fmt.Printf("In progress tasks (%d):\n", len(tasks.InP))
