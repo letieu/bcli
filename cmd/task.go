@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"bcli/api"
+	"bcli/view"
 	"fmt"
 
 	"github.com/spf13/cobra"
@@ -29,17 +30,17 @@ var listTaskCmd = &cobra.Command{
 
 		fmt.Printf("Open tasks (%d):\n", len(tasks.Open))
 		for _, task := range tasks.Open {
-			fmt.Println(" - " + task.TaskNm)
+            view.PrintTask(task)
 		}
 
 		fmt.Printf("In progress tasks (%d):\n", len(tasks.InP))
 		for _, task := range tasks.InP {
-			fmt.Println(" - " + task.TaskNm)
+            view.PrintTask(task)
 		}
 
 		fmt.Printf("Done tasks (%d):\n", len(tasks.Done))
 		for _, task := range tasks.Done {
-			fmt.Println(" - " + task.TaskNm)
+            view.PrintTask(task)
 		}
 	},
 }
