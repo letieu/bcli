@@ -6,26 +6,9 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"net/http/cookiejar"
-	"net/url"
-	"os"
-	"path"
-	"strings"
 )
 
 var baseURL = "https://blueprint.cyberlogitec.com.vn"
-var client *http.Client
-
-func init() {
-	jar, err := loadCookies()
-	if err != nil {
-		panic(err)
-	}
-
-	client = &http.Client{
-		Jar: jar,
-	}
-}
 
 type taskResponse struct {
 	Message string `json:"message"`
@@ -213,7 +196,7 @@ func ListTasks() (Tasks, error) {
 	req.Header.Set("Accept", "application/json, text/plain, */*")
 	req.Header.Set("Content-Type", "application/json;charset=utf-8")
 
-	res, err := client.Do(req)
+	res, err := authClient.Do(req)
 	if err != nil {
 		return Tasks{}, err
 	}
@@ -257,7 +240,7 @@ func GetTask(taskId string) (getTaskResponse, error) {
 
 	req.Header.Set("Accept", "application/json, text/plain, */*")
 
-	res, err := client.Do(req)
+	res, err := authClient.Do(req)
 	if err != nil {
 		return getTaskResponse{}, err
 	}
@@ -286,14 +269,14 @@ func UpdateTaskContent(taskID string, content string) error {
 
 	url := baseURL + "/api/update-content"
 	payload := updateTaskRequest{
-		ReqID:       taskID,
-		Type:        "reqCtnt", // Update content
-		Action:      "REQ_WTC_CNG",
-		PstTpCd:     "PST_TP_CDACT",
-		PjtID:       currentTask.DetailReqVO.PjtID,
-		SubPjtID:    currentTask.DetailReqVO.SubPjtID,
+		ReqID:    taskID,
+		Type:     "reqCtnt", // Update content
+		Action:   "REQ_WTC_CNG",
+		PstTpCd:  "PST_TP_CDACT",
+		PjtID:    currentTask.DetailReqVO.PjtID,
+		SubPjtID: currentTask.DetailReqVO.SubPjtID,
 
-        CrntReqCntn: currentTask.DetailReqVO.ReqCtnt,
+		CrntReqCntn: currentTask.DetailReqVO.ReqCtnt,
 		PrvsReqCntn: currentTask.DetailReqVO.ReqCtnt,
 
 		CmtCtnt: "<div class='system-comment'> • Changed Content: </div>",
@@ -312,8 +295,8 @@ func UpdateTaskContent(taskID string, content string) error {
 	}
 
 	req.Header.Set("Accept", "application/json, text/plain, */*")
-    req.Header.Set("Content-Type", "application/json;charset=utf-8")
-	res, err := client.Do(req)
+	req.Header.Set("Content-Type", "application/json;charset=utf-8")
+	res, err := authClient.Do(req)
 
 	if err != nil {
 		return err
@@ -321,44 +304,4 @@ func UpdateTaskContent(taskID string, content string) error {
 
 	defer res.Body.Close()
 	return nil
-}
-
-func loadCookies() (http.CookieJar, error) {
-	home, _ := os.UserHomeDir()
-	cookiePath := path.Join(home, ".bcli/cookie")
-
-	file, err := os.Open(cookiePath)
-	if err != nil {
-		return nil, err
-	}
-
-	defer file.Close()
-
-	buf := new(bytes.Buffer)
-	buf.ReadFrom(file)
-
-	str := buf.String()
-	parts := strings.Split(str, ";")
-
-	jar, err := cookiejar.New(nil)
-	if err != nil {
-		return nil, err
-	}
-
-	url, _ := url.Parse(baseURL)
-
-	cookies := []*http.Cookie{}
-	for _, c := range parts {
-		cookie := &http.Cookie{}
-		cookieStr := strings.TrimSpace(c)
-		cookieParts := strings.Split(cookieStr, "=")
-		cookie.Name = cookieParts[0]
-		cookie.Value = cookieParts[1]
-
-		cookies = append(cookies, cookie)
-	}
-
-	jar.SetCookies(url, cookies)
-
-	return jar, nil
 }
