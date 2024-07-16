@@ -4,6 +4,7 @@ import (
 	"bcli/api"
 	"bcli/view"
 	"fmt"
+	"os"
 
 	"github.com/spf13/cobra"
 )
@@ -25,7 +26,7 @@ var listTaskCmd = &cobra.Command{
 		tasks, err := api.ListTasks()
 
 		if err != nil {
-			panic(err)
+            fmt.Println(err)
 		}
 
 		fmt.Printf("Open tasks (%d):\n", len(tasks.Open))
@@ -58,7 +59,8 @@ var viewTaskCmd = &cobra.Command{
 		taskId := args[0]
 		task, err := api.GetTask(taskId)
 		if err != nil {
-			panic(err)
+            fmt.Println(err)
+            os.Exit(1)
 		}
 
 		fmt.Println(task)
@@ -87,7 +89,8 @@ var updateTaskContentCmd = &cobra.Command{
 		taskId := args[0]
 		err := api.UpdateTaskContent(taskId, "nt..")
 		if err != nil {
-			panic(err)
+            fmt.Println(err)
+            os.Exit(1)
 		}
 
 		fmt.Println("Task content updated")

@@ -2,6 +2,8 @@ package cmd
 
 import (
 	"bcli/api"
+	"fmt"
+	"os"
 
 	"github.com/spf13/cobra"
 )
@@ -14,7 +16,8 @@ var punch = &cobra.Command{
         err := api.Punch()
 
         if err != nil {
-            panic(err)
+            fmt.Println(err)
+            os.Exit(1)
         }
 	},
 }
