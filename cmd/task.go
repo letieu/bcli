@@ -58,14 +58,16 @@ var viewTaskCmd = &cobra.Command{
 			return
 		}
 
-		taskId := args[0]
-		task, err := api.GetTask(taskId)
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
+        taskId := args[0]
+        link := fmt.Sprintf("%s%s", taskDetailPrefix, taskId)
 
-		fmt.Println(task)
+        web, _ := cmd.Flags().GetBool("web")
+        if web {
+            cmd := exec.Command("xdg-open", link)
+            cmd.Run()
+        } else {
+            fmt.Println(link)
+        }
 	},
 }
 
@@ -123,6 +125,8 @@ func init() {
 	taskCmd.AddCommand(createTaskCmd)
 	taskCmd.AddCommand(viewTaskCmd)
 	taskCmd.AddCommand(updateTaskCmd)
+
+    viewTaskCmd.Flags().BoolP("web", "w", false, "Open task in web browser")
 
 	updateTaskCmd.Flags().StringP("title", "t", "", "Task title")
 	updateTaskCmd.Flags().StringP("content", "c", "", "Task content")
