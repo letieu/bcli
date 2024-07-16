@@ -10,7 +10,7 @@ import (
 
 var baseURL = "https://blueprint.cyberlogitec.com.vn"
 
-type taskResponse struct {
+type tasksResponse struct {
 	Message string `json:"message"`
 	Code    int    `json:"code"`
 	Data    struct {
@@ -49,7 +49,7 @@ type Task struct {
 	Mode          int    `json:"mode"`
 }
 
-type updateTaskRequest struct {
+type updateTaskContentRequest struct {
 	ReqID       string `json:"reqId"`
 	PjtID       string `json:"pjtId"`
 	SubPjtID    string `json:"subPjtId"`
@@ -60,6 +60,17 @@ type updateTaskRequest struct {
 	ReqCtnt     string `json:"reqCtnt"`
 	Action      string `json:"action"`
 	PstTpCd     string `json:"pstTpCd"`
+}
+
+type updateTaskTitleRequest struct {
+	ReqID    string `json:"reqId"`
+	ReqTitNm string `json:"reqTitNm"`
+	PjtID    string `json:"pjtId"`
+	SubPjtID string `json:"subPjtId"`
+	Type     string `json:"type"`
+	CmtCtnt  string `json:"cmtCtnt"`
+	Action   string `json:"action"`
+	PstTpCd  string `json:"pstTpCd"`
 }
 
 type getTaskDetailResponse struct {
@@ -209,7 +220,7 @@ func ListTasks() (Tasks, error) {
 		return Tasks{}, err
 	}
 
-	var taskResponse taskResponse
+	var taskResponse tasksResponse
 
 	err = json.Unmarshal(body, &taskResponse)
 
@@ -253,12 +264,12 @@ func GetTaskDetail(taskId string) (getTaskDetailResponse, error) {
 	}
 
 	var taskResponse getTaskDetailResponse
-    if res.StatusCode != 200 {
-        return getTaskDetailResponse{}, &ApiError{
-            Status:  res.Status,
-            Response: res,
-        }
-    }
+	if res.StatusCode != 200 {
+		return getTaskDetailResponse{}, &ApiError{
+			Status:   res.Status,
+			Response: res,
+		}
+	}
 
 	err = json.Unmarshal(body, &taskResponse)
 	if err != nil {
@@ -268,15 +279,14 @@ func GetTaskDetail(taskId string) (getTaskDetailResponse, error) {
 	return taskResponse, nil
 }
 
-func UpdateTaskContent(taskID string, content string) error {
-	currentTask, err := GetTaskDetail(taskID)
-	if err != nil {
-		return err
-	}
+func UpdateTaskContent(currentTask getTaskDetailResponse, content string) error {
+    if currentTask.DetailReqVO.ReqCtnt == content {
+        return nil
+    }
 
 	url := baseURL + "/api/update-content"
-	payload := updateTaskRequest{
-		ReqID:    taskID,
+	payload := updateTaskContentRequest{
+		ReqID:    currentTask.DetailReqVO.ReqID,
 		Type:     "reqCtnt", // Update content
 		Action:   "REQ_WTC_CNG",
 		PstTpCd:  "PST_TP_CDACT",
@@ -288,6 +298,46 @@ func UpdateTaskContent(taskID string, content string) error {
 
 		CmtCtnt: "<div class='system-comment'> • Changed Content: </div>",
 		ReqCtnt: content,
+	}
+
+	jsonPayload, err := json.Marshal(payload)
+
+	if err != nil {
+		return err
+	}
+
+	req, err := http.NewRequest("PUT", url, bytes.NewBuffer(jsonPayload))
+	if err != nil {
+		return err
+	}
+
+	req.Header.Set("Accept", "application/json, text/plain, */*")
+	req.Header.Set("Content-Type", "application/json;charset=utf-8")
+	res, err := authClient.Do(req)
+
+	if err != nil {
+		return err
+	}
+
+	defer res.Body.Close()
+	return nil
+}
+
+func UpdateTaskTitle(currentTask getTaskDetailResponse, title string) error {
+    if currentTask.DetailReqVO.ReqTitNm == title {
+        return nil
+    }
+
+	url := baseURL + "/api/update-title"
+	payload := updateTaskTitleRequest{
+		ReqID:    currentTask.DetailReqVO.ReqID,
+		Type:     "reqTitNm",
+		Action:   "REQ_WTC_CNG",
+		PstTpCd:  "PST_TP_CDACT",
+		PjtID:    currentTask.DetailReqVO.PjtID,
+		SubPjtID: currentTask.DetailReqVO.SubPjtID,
+		CmtCtnt:  "<div class='system-comment'> • Changed Title: </div>",
+		ReqTitNm: title,
 	}
 
 	jsonPayload, err := json.Marshal(payload)

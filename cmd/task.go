@@ -97,30 +97,28 @@ var updateTaskCmd = &cobra.Command{
 		}
 
 		taskId := args[0]
-		currentTask, err := api.GetTask(taskId)
+		currentTask, err := api.GetTaskDetail(taskId)
 
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
 		}
 
-		taskTitle := currentTask.DetailReqVO.ReqTitNm
-		fmt.Println(taskTitle)
-
-		updatedContent, updated := editTask(currentTask.DetailReqVO.ReqCtnt)
-        if !updated {
-            fmt.Println("No changes made")
-            return
+		newTitle, newContent, err := editTask(currentTask.DetailReqVO.ReqTitNm, currentTask.DetailReqVO.ReqCtnt)
+        if err != nil {
+            fmt.Println(err)
+            os.Exit(1)
         }
 
-		fmt.Println("Updating task content")
-		err = api.UpdateTaskContent(taskId, updatedContent)
+		fmt.Println("Updating task")
+        err = api.UpdateTaskTitle(currentTask, newTitle)
+		err = api.UpdateTaskContent(currentTask, newContent)
+
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
 		}
-
-		fmt.Println("Task content updated")
+		fmt.Println("Task updated")
 	},
 }
 
@@ -143,11 +141,6 @@ func init() {
 
     viewTaskCmd.Flags().BoolP("web", "w", false, "Open task in web browser")
     viewTaskCmd.Flags().BoolP("markdown", "m", false, "Render task content in markdown")
-
-	updateTaskCmd.Flags().StringP("title", "t", "", "Task title")
-	updateTaskCmd.Flags().StringP("content", "c", "", "Task content")
-	updateTaskCmd.Flags().BoolP("edit", "e", false, "Edit task in editor")
-	updateTaskCmd.MarkFlagsOneRequired("title", "content", "edit")
 }
 
 func editInEditor(content string) (string, error) {
@@ -185,28 +178,25 @@ func editInEditor(content string) (string, error) {
 	return string(updatedContent), nil
 }
 
-func editTask(contentHtml string) (string, bool) {
-	taskContentMd, err := paser.HtmlToMd(contentHtml)
+func editTask(title string, contentHtml string) (string, string, error) {
+	bufText, err := paser.CreateBufText(title, contentHtml)
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+        return "", "", err
 	}
 
-	updatedContent, err := editInEditor(taskContentMd)
+    newBufText, err := editInEditor(bufText)
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+        return "", "", err
 	}
 
-	updatedContentHtml, err := paser.MdToHtml(updatedContent)
+	if newBufText == bufText {
+		return "", "", fmt.Errorf("No changes made")
+	}
+
+	newTitle, newContentHtml, err := paser.ParseBufText(newBufText)
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+        return "", "", err
 	}
 
-	if updatedContent == taskContentMd {
-		return "", false
-	}
-
-    return updatedContentHtml, true
+    return newTitle, newContentHtml, nil
 }
