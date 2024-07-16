@@ -75,6 +75,7 @@ var viewTaskCmd = &cobra.Command{
 				os.Exit(1)
 			}
 
+            mdText = fmt.Sprintf("# #%d\n%s", task.DetailReqVO.SeqNo, mdText)
 			view.RenderMarkdown(mdText)
 			return
 		}
