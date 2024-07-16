@@ -62,7 +62,7 @@ type updateTaskRequest struct {
 	PstTpCd     string `json:"pstTpCd"`
 }
 
-type getTaskResponse struct {
+type getTaskDetailResponse struct {
 	LstDayOff []struct {
 		ClassName string `json:"className"`
 		VacID     string `json:"vacId"`
@@ -229,33 +229,40 @@ func CreateTask(template string, title string, content string) {
 	fmt.Printf("Creating task with template: %s, title: %s, content: %s\n", template, title, content)
 }
 
-func GetTask(taskId string) (getTaskResponse, error) {
+func GetTask(taskId string) (getTaskDetailResponse, error) {
 	url := baseURL + "/api/searchRequirementDetails?reqId=" + taskId
 
 	req, err := http.NewRequest("GET", url, nil)
 
 	if err != nil {
-		return getTaskResponse{}, err
+		return getTaskDetailResponse{}, err
 	}
 
 	req.Header.Set("Accept", "application/json, text/plain, */*")
 
 	res, err := authClient.Do(req)
 	if err != nil {
-		return getTaskResponse{}, err
+		return getTaskDetailResponse{}, err
 	}
 
 	defer res.Body.Close()
 	body, err := io.ReadAll(res.Body)
 
 	if err != nil {
-		return getTaskResponse{}, err
+		return getTaskDetailResponse{}, err
 	}
 
-	var taskResponse getTaskResponse
+	var taskResponse getTaskDetailResponse
+    if res.StatusCode != 200 {
+        return getTaskDetailResponse{}, &ApiError{
+            Status:  res.Status,
+            Response: res,
+        }
+    }
+
 	err = json.Unmarshal(body, &taskResponse)
 	if err != nil {
-		return getTaskResponse{}, err
+		return getTaskDetailResponse{}, err
 	}
 
 	return taskResponse, nil

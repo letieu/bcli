@@ -2,9 +2,11 @@ package cmd
 
 import (
 	"bcli/api"
+	"bcli/paser"
 	"bcli/view"
 	"fmt"
 	"os"
+	"os/exec"
 
 	"github.com/spf13/cobra"
 )
@@ -26,22 +28,22 @@ var listTaskCmd = &cobra.Command{
 		tasks, err := api.ListTasks()
 
 		if err != nil {
-            fmt.Println(err)
+			fmt.Println(err)
 		}
 
 		fmt.Printf("Open tasks (%d):\n", len(tasks.Open))
 		for _, task := range tasks.Open {
-            view.PrintTask(&task)
+			view.PrintTask(&task)
 		}
 
 		fmt.Printf("In progress tasks (%d):\n", len(tasks.InP))
 		for _, task := range tasks.InP {
-            view.PrintTask(&task)
+			view.PrintTask(&task)
 		}
 
 		fmt.Printf("Done tasks (%d):\n", len(tasks.Done))
 		for _, task := range tasks.Done {
-            view.PrintTask(&task)
+			view.PrintTask(&task)
 		}
 	},
 }
@@ -59,8 +61,8 @@ var viewTaskCmd = &cobra.Command{
 		taskId := args[0]
 		task, err := api.GetTask(taskId)
 		if err != nil {
-            fmt.Println(err)
-            os.Exit(1)
+			fmt.Println(err)
+			os.Exit(1)
 		}
 
 		fmt.Println(task)
@@ -72,25 +74,33 @@ var updateTaskCmd = &cobra.Command{
 	Short: "Update a task",
 	Long:  `Update a task`,
 	Run: func(cmd *cobra.Command, args []string) {
-		cmd.Help()
-	},
-}
-
-var updateTaskContentCmd = &cobra.Command{
-	Use:   "content",
-	Short: "Update task content",
-	Long:  `Update task content`,
-	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
 			fmt.Println("Please provide a task ID")
 			return
 		}
 
 		taskId := args[0]
-		err := api.UpdateTaskContent(taskId, "nt..")
+		currentTask, err := api.GetTask(taskId)
+
 		if err != nil {
-            fmt.Println(err)
-            os.Exit(1)
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		taskTitle := currentTask.DetailReqVO.ReqTitNm
+		fmt.Println(taskTitle)
+
+		updatedContent, updated := editTask(currentTask.DetailReqVO.ReqCtnt)
+        if !updated {
+            fmt.Println("No changes made")
+            return
+        }
+
+		fmt.Println("Updating task content")
+		err = api.UpdateTaskContent(taskId, updatedContent)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
 		}
 
 		fmt.Println("Task content updated")
@@ -114,5 +124,69 @@ func init() {
 	taskCmd.AddCommand(viewTaskCmd)
 	taskCmd.AddCommand(updateTaskCmd)
 
-	updateTaskCmd.AddCommand(updateTaskContentCmd)
+	updateTaskCmd.Flags().StringP("title", "t", "", "Task title")
+	updateTaskCmd.Flags().StringP("content", "c", "", "Task content")
+	updateTaskCmd.Flags().BoolP("edit", "e", false, "Edit task in editor")
+	updateTaskCmd.MarkFlagsOneRequired("title", "content", "edit")
+}
+
+func editInEditor(content string) (string, error) {
+	tmpfile, err := os.CreateTemp("", "task-*.md")
+	if err != nil {
+		return "", err
+	}
+	defer os.Remove(tmpfile.Name()) // clean up
+
+	_, err = tmpfile.Write([]byte(content))
+	if err != nil {
+		return "", err
+	}
+
+	editor := os.Getenv("EDITOR")
+	if editor == "" {
+		editor = "vim"
+	}
+
+	cmd := exec.Command(editor, tmpfile.Name())
+	cmd.Stdin = os.Stdin
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+	err = cmd.Run()
+	if err != nil {
+		return "", err
+	}
+
+	updatedContent, err := os.ReadFile(tmpfile.Name())
+	if err != nil {
+		return "", err
+	}
+
+	return string(updatedContent), nil
+}
+
+func editTask(contentHtml string) (string, bool) {
+	taskContentMd, err := paser.HtmlToMd(contentHtml)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	updatedContent, err := editInEditor(taskContentMd)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	updatedContentHtml, err := paser.MdToHtml(updatedContent)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	if updatedContent == taskContentMd {
+		return "", false
+	}
+
+    return updatedContentHtml, true
 }

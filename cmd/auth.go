@@ -91,6 +91,7 @@ func init() {
 	loginCmd.Flags().StringP("username", "u", "", "Username")
 	loginCmd.Flags().StringP("password", "p", "", "Password")
 	loginCmd.Flags().StringP("file", "f", "", "File containing username and password")
+    loginCmd.MarkFlagFilename("file")
 
 	loginCmd.MarkFlagsRequiredTogether("username", "password")
 	loginCmd.MarkFlagsOneRequired("username", "file")
