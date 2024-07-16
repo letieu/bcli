@@ -31,17 +31,17 @@ var listTaskCmd = &cobra.Command{
 
 		fmt.Printf("Open tasks (%d):\n", len(tasks.Open))
 		for _, task := range tasks.Open {
-            view.PrintTask(task)
+            view.PrintTask(&task)
 		}
 
 		fmt.Printf("In progress tasks (%d):\n", len(tasks.InP))
 		for _, task := range tasks.InP {
-            view.PrintTask(task)
+            view.PrintTask(&task)
 		}
 
 		fmt.Printf("Done tasks (%d):\n", len(tasks.Done))
 		for _, task := range tasks.Done {
-            view.PrintTask(task)
+            view.PrintTask(&task)
 		}
 	},
 }

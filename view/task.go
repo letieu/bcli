@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-func PrintTask(task api.Task) {
+func PrintTask(task *api.Task) {
 	var seqNo = task.SeqNo
 	var taskNm = task.TaskNm
 

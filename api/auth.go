@@ -1,6 +1,7 @@
 package api
 
 import (
+	"encoding/json"
 	"errors"
 	"io"
 	"net/http"
@@ -18,6 +19,22 @@ const homePage = "https://blueprint.cyberlogitec.com.vn/"
 var authClient *http.Client
 var cookiePath string
 var jar *cookiejar.PersistentJar
+
+type UserInfo struct {
+	UsrNo      interface{} `json:"usrNo"`
+	UsrID      string      `json:"usrId"`
+	UsrNm      string      `json:"usrNm"`
+	UsrEml     string      `json:"usrEml"`
+	ComUsrSx   string      `json:"comUsrSx"`
+	EmpeNo     interface{} `json:"empeNo"`
+	CntCd      string      `json:"cntCd"`
+	ImgURL     string      `json:"imgUrl"`
+	OrzID      string      `json:"orzId"`
+	CoCd       string      `json:"coCd"`
+	CoNm       interface{} `json:"coNm"`
+	OfcCd      interface{} `json:"ofcCd"`
+	OrzNm      string      `json:"orzNm"`
+}
 
 func init() {
 	home, _ := os.UserHomeDir()
@@ -214,4 +231,24 @@ func Logout() error {
     }
 
     return nil
+}
+
+func GetUserInfo() (UserInfo, error) {
+    req, _ := http.NewRequest("GET", "https://blueprint.cyberlogitec.com.vn/api/getUserInfo", nil)
+
+    req.Header.Set("User-Agent", "Mozilla/5.0 (X11; Linux x86_64; rv:126.0) Gecko/20100101 Firefox/126.0")
+    req.Header.Set("Accept", "application/json, text/plain, */*")
+
+    resp, err := authClient.Do(req)
+
+    if err != nil {
+        return UserInfo{}, err
+    }
+
+    defer resp.Body.Close()
+
+    var userInfo UserInfo
+
+    json.NewDecoder(resp.Body).Decode(&userInfo)
+    return userInfo, nil
 }

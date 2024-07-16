@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"bcli/api"
+	"bcli/view"
 	"fmt"
 	"os"
 	"strings"
@@ -64,11 +65,28 @@ var logoutCmd = &cobra.Command{
 	},
 }
 
+var infoCmd = &cobra.Command{
+    Use: "info",
+    Short: "Info",
+    Long: "Get blueprint user info",
+    Run: func(cmd *cobra.Command, args []string) {
+        userInfo, err := api.GetUserInfo()
+
+        if err != nil {
+            fmt.Println(err)
+            os.Exit(1)
+        }
+
+        view.PrintUser(&userInfo)
+    },
+}
+
 func init() {
 	rootCmd.AddCommand(authCmd)
 
 	authCmd.AddCommand(loginCmd)
 	authCmd.AddCommand(logoutCmd)
+	authCmd.AddCommand(infoCmd)
 
 	loginCmd.Flags().StringP("username", "u", "", "Username")
 	loginCmd.Flags().StringP("password", "p", "", "Password")
