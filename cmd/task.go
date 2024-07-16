@@ -77,8 +77,13 @@ var viewTaskCmd = &cobra.Command{
                 fmt.Println(err)
                 os.Exit(1)
             }
-            taskContentMd, err := paser.HtmlToMd(task.DetailReqVO.ReqCtnt)
-            view.RenderMarkdown(taskContentMd)
+            mdText, err := paser.CreateBufText(task.DetailReqVO.ReqTitNm, task.DetailReqVO.ReqCtnt)
+            if err != nil {
+                fmt.Println(err)
+                os.Exit(1)
+            }
+
+            view.RenderMarkdown(mdText)
             return
         }
 
