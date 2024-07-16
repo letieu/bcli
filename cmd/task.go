@@ -11,6 +11,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const taskDetailPrefix = "https://blueprint.cyberlogitec.com.vn/UI_PIM_001_1/"
+
 var taskCmd = &cobra.Command{
 	Use:   "task",
 	Short: "Task management",
@@ -33,17 +35,17 @@ var listTaskCmd = &cobra.Command{
 
 		fmt.Printf("Open tasks (%d):\n", len(tasks.Open))
 		for _, task := range tasks.Open {
-			view.PrintTask(&task)
+			view.PrintTaskInLine(&task)
 		}
 
 		fmt.Printf("In progress tasks (%d):\n", len(tasks.InP))
 		for _, task := range tasks.InP {
-			view.PrintTask(&task)
+			view.PrintTaskInLine(&task)
 		}
 
 		fmt.Printf("Done tasks (%d):\n", len(tasks.Done))
 		for _, task := range tasks.Done {
-			view.PrintTask(&task)
+			view.PrintTaskInLine(&task)
 		}
 	},
 }
@@ -65,9 +67,22 @@ var viewTaskCmd = &cobra.Command{
         if web {
             cmd := exec.Command("xdg-open", link)
             cmd.Run()
-        } else {
-            fmt.Println(link)
+            return
         }
+
+        markdown, _ := cmd.Flags().GetBool("markdown")
+        if markdown {
+            task, err := api.GetTaskDetail(taskId)
+            if err != nil {
+                fmt.Println(err)
+                os.Exit(1)
+            }
+            taskContentMd, err := paser.HtmlToMd(task.DetailReqVO.ReqCtnt)
+            view.RenderMarkdown(taskContentMd)
+            return
+        }
+
+        fmt.Println(link)
 	},
 }
 
@@ -127,6 +142,7 @@ func init() {
 	taskCmd.AddCommand(updateTaskCmd)
 
     viewTaskCmd.Flags().BoolP("web", "w", false, "Open task in web browser")
+    viewTaskCmd.Flags().BoolP("markdown", "m", false, "Render task content in markdown")
 
 	updateTaskCmd.Flags().StringP("title", "t", "", "Task title")
 	updateTaskCmd.Flags().StringP("content", "c", "", "Task content")

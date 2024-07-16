@@ -229,7 +229,7 @@ func CreateTask(template string, title string, content string) {
 	fmt.Printf("Creating task with template: %s, title: %s, content: %s\n", template, title, content)
 }
 
-func GetTask(taskId string) (getTaskDetailResponse, error) {
+func GetTaskDetail(taskId string) (getTaskDetailResponse, error) {
 	url := baseURL + "/api/searchRequirementDetails?reqId=" + taskId
 
 	req, err := http.NewRequest("GET", url, nil)
@@ -269,7 +269,7 @@ func GetTask(taskId string) (getTaskDetailResponse, error) {
 }
 
 func UpdateTaskContent(taskID string, content string) error {
-	currentTask, err := GetTask(taskID)
+	currentTask, err := GetTaskDetail(taskID)
 	if err != nil {
 		return err
 	}
