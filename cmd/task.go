@@ -66,6 +66,7 @@ var viewTaskCmd = &cobra.Command{
 
 		if web, _ := cmd.Flags().GetBool("web"); web {
 			link := fmt.Sprintf("%s%s", taskDetailPrefix, taskId)
+            fmt.Printf("Opening %s\n in web browser", link)
 			cmd := exec.Command("xdg-open", link)
 			cmd.Run()
 			return
