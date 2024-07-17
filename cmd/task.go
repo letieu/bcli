@@ -36,15 +36,15 @@ var listTaskCmd = &cobra.Command{
 
 		if markdown, _ := cmd.Flags().GetBool("markdown"); markdown {
 			view.PrintTaskListInMarkdown(&tasks)
-            return
-		} 
+			return
+		}
 
-        if simple, _ := cmd.Flags().GetBool("simple"); simple {
-            view.PrintSimpleTaskList(&tasks)
-            return
-        }
+		if simple, _ := cmd.Flags().GetBool("simple"); simple {
+			view.PrintSimpleTaskList(&tasks)
+			return
+		}
 
-	    view.PrintTaskList(&tasks)
+		view.PrintTaskList(&tasks)
 	},
 }
 
@@ -64,30 +64,31 @@ var viewTaskCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
-		web, _ := cmd.Flags().GetBool("web")
-		if web {
+		if web, _ := cmd.Flags().GetBool("web"); web {
 			link := fmt.Sprintf("%s%s", taskDetailPrefix, taskId)
 			cmd := exec.Command("xdg-open", link)
 			cmd.Run()
 			return
 		}
 
-		markdown, _ := cmd.Flags().GetBool("markdown")
-		if markdown {
-			task, err := api.GetTaskDetail(taskId)
-			if err != nil {
-				fmt.Println(err)
-				os.Exit(1)
-			}
-			mdText, err := paser.CreateBufText(task.DetailReqVO.ReqTitNm, task.DetailReqVO.ReqCtnt)
-			if err != nil {
-				fmt.Println(err)
-				os.Exit(1)
-			}
+		task, err := api.GetTaskDetail(taskId)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
 
-			mdText = fmt.Sprintf("# #%d\n%s", task.DetailReqVO.SeqNo, mdText)
+		mdText, err := paser.CreateBufText(task.DetailReqVO.ReqTitNm, task.DetailReqVO.ReqCtnt)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		mdText = fmt.Sprintf("# #%d\n%s", task.DetailReqVO.SeqNo, mdText)
+
+		if simple, _ := cmd.Flags().GetBool("simple"); simple {
+			fmt.Println(mdText)
+		} else {
 			view.RenderMarkdown(mdText)
-			return
 		}
 	},
 }
@@ -170,8 +171,9 @@ func init() {
 	listTaskCmd.Flags().BoolP("markdown", "m", false, "Render task list in markdown")
 	listTaskCmd.Flags().BoolP("simple", "s", false, "Render task list in simple mode")
 
+	viewTaskCmd.Flags().BoolP("markdown", "m", true, "Render task content in markdown")
+	viewTaskCmd.Flags().BoolP("simple", "s", false, "Render task content in simple mode")
 	viewTaskCmd.Flags().BoolP("web", "w", false, "Open task in web browser")
-	viewTaskCmd.Flags().BoolP("markdown", "m", false, "Render task content in markdown")
 
 	createTaskCmd.Flags().StringP("title", "t", "", "Task title")
 	createTaskCmd.Flags().StringP("template", "T", "", "Task template")
