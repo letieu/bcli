@@ -31,7 +31,7 @@ var listTaskCmd = &cobra.Command{
 
 		if err != nil {
 			fmt.Println(err)
-            os.Exit(1)
+			os.Exit(1)
 		}
 
 		markdown, _ := cmd.Flags().GetBool("markdown")
@@ -53,11 +53,15 @@ var viewTaskCmd = &cobra.Command{
 			return
 		}
 
-		taskId := args[0]
-		link := fmt.Sprintf("%s%s", taskDetailPrefix, taskId)
+		taskId, err := getTaskId(args[0])
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
 
 		web, _ := cmd.Flags().GetBool("web")
 		if web {
+			link := fmt.Sprintf("%s%s", taskDetailPrefix, taskId)
 			cmd := exec.Command("xdg-open", link)
 			cmd.Run()
 			return
@@ -80,8 +84,6 @@ var viewTaskCmd = &cobra.Command{
 			view.RenderMarkdown(mdText)
 			return
 		}
-
-		fmt.Println(link)
 	},
 }
 
@@ -95,9 +97,13 @@ var updateTaskCmd = &cobra.Command{
 			return
 		}
 
-		taskId := args[0]
-		currentTask, err := api.GetTaskDetail(taskId)
+		taskId, err := getTaskId(args[0])
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
 
+		currentTask, err := api.GetTaskDetail(taskId)
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
@@ -224,4 +230,17 @@ func editTask(title string, contentHtml string) (string, string, error) {
 	}
 
 	return newTitle, newContentHtml, nil
+}
+
+func getTaskId(id string) (string, error) {
+	if isSeqNo := len(id) < 6; isSeqNo == false {
+		return id, nil
+	}
+
+	taskId, err := api.SearchTaskByNo(id)
+	if err != nil {
+		return "", err
+	}
+
+	return taskId, nil
 }

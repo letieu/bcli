@@ -220,12 +220,12 @@ func ListTasks() (Tasks, error) {
 		return Tasks{}, err
 	}
 
-    if res.StatusCode != 200 {
-        return Tasks{}, &ApiError{
-            Status:   res.Status,
-            Response: res,
-        }
-    }
+	if res.StatusCode != 200 {
+		return Tasks{}, &ApiError{
+			Status:   res.Status,
+			Response: res,
+		}
+	}
 
 	defer res.Body.Close()
 	body, err := io.ReadAll(res.Body)
@@ -275,17 +275,17 @@ func CreateTask(payload []byte) (CreateNewTaskResponse, error) {
 		}
 	}
 
-    body, err := io.ReadAll(res.Body)
+	body, err := io.ReadAll(res.Body)
 
-    if err != nil {
-        return CreateNewTaskResponse{}, err
-    }
+	if err != nil {
+		return CreateNewTaskResponse{}, err
+	}
 
-    var taskResponse CreateNewTaskResponse
-    err = json.Unmarshal(body, &taskResponse)
-    if err != nil {
-        return CreateNewTaskResponse{}, err
-    }
+	var taskResponse CreateNewTaskResponse
+	err = json.Unmarshal(body, &taskResponse)
+	if err != nil {
+		return CreateNewTaskResponse{}, err
+	}
 
 	return taskResponse, nil
 }
@@ -411,4 +411,79 @@ func UpdateTaskTitle(currentTask getTaskDetailResponse, title string) error {
 
 	defer res.Body.Close()
 	return nil
+}
+
+type SearchTaskRequest struct {
+	PjtID      string   `json:"pjtId"`
+	SeqNo      string   `json:"seqNo"`
+	AdvFlg     string   `json:"advFlg"`
+	ReqStsCd   []string `json:"reqStsCd"`
+	JbTpCd     string   `json:"jbTpCd"`
+	ItrtnID    string   `json:"itrtnId"`
+	BeginIdx   int      `json:"beginIdx"`
+	EndIdx     int      `json:"endIdx"`
+	IsLoadLast bool     `json:"isLoadLast"`
+	PicID      string   `json:"picId"`
+	PageSize   int      `json:"pageSize"`
+}
+
+type SearchTaskResponse struct {
+	LstReq []struct {
+		ReqId string `json:"reqId"`
+	} `json:"lstReq"`
+}
+
+func SearchTaskByNo(seqNo string) (string, error) {
+	url := baseURL + "/api/uiPim001/searchRequirement"
+
+	payload := SearchTaskRequest{
+		SeqNo:      seqNo,
+		AdvFlg:     "N",
+		ReqStsCd:   []string{"REQ_STS_CDPRC", "REQ_STS_CDOPN"},
+		JbTpCd:     "_ALL_",
+		ItrtnID:    "_ALL_",
+		BeginIdx:   0,
+		EndIdx:     25,
+		IsLoadLast: false,
+		PicID:      "",
+		PageSize:   25,
+	}
+	jsonPayload, err := json.Marshal(payload)
+	if err != nil {
+		return "", err
+	}
+
+	req, _ := http.NewRequest("POST", url, bytes.NewBuffer(jsonPayload))
+
+	req.Header.Set("Accept", "application/json, text/plain, */*")
+	req.Header.Set("Content-Type", "application/json;charset=utf-8")
+
+	res, err := authClient.Do(req)
+	if err != nil {
+		return "", err
+	}
+	if res.StatusCode != 200 {
+		return "", &ApiError{
+			Status:   res.Status,
+			Response: res,
+		}
+	}
+
+	taskResponse := SearchTaskResponse{}
+	body, err := io.ReadAll(res.Body)
+
+	if err != nil {
+		return "", err
+	}
+
+	err = json.Unmarshal(body, &taskResponse)
+	if err != nil {
+		return "", err
+	}
+
+    if len(taskResponse.LstReq) == 0 {
+        return "", fmt.Errorf("Task not found")
+    }
+
+    return taskResponse.LstReq[0].ReqId, nil
 }
