@@ -235,9 +235,32 @@ func ListTasks() (Tasks, error) {
 	}, nil
 }
 
-func CreateTask(template string, title string, content string) {
-	// TODO: implement this function
-	fmt.Printf("Creating task with template: %s, title: %s, content: %s\n", template, title, content)
+func CreateTask(payload []byte) error {
+	url := baseURL + "/api/new-task/new-requirement"
+
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(payload))
+	if err != nil {
+		return err
+	}
+
+	req.Header.Set("Accept", "application/json, text/plain, */*")
+	req.Header.Set("Content-Type", "application/json;charset=utf-8")
+	res, err := authClient.Do(req)
+
+	if err != nil {
+		return err
+	}
+
+	defer res.Body.Close()
+
+	if res.StatusCode != 200 {
+		return &ApiError{
+			Status:   res.Status,
+			Response: res,
+		}
+	}
+
+	return nil
 }
 
 func GetTaskDetail(taskId string) (getTaskDetailResponse, error) {
@@ -280,9 +303,9 @@ func GetTaskDetail(taskId string) (getTaskDetailResponse, error) {
 }
 
 func UpdateTaskContent(currentTask getTaskDetailResponse, content string) error {
-    if currentTask.DetailReqVO.ReqCtnt == content {
-        return nil
-    }
+	if currentTask.DetailReqVO.ReqCtnt == content {
+		return nil
+	}
 
 	url := baseURL + "/api/update-content"
 	payload := updateTaskContentRequest{
@@ -324,9 +347,9 @@ func UpdateTaskContent(currentTask getTaskDetailResponse, content string) error 
 }
 
 func UpdateTaskTitle(currentTask getTaskDetailResponse, title string) error {
-    if currentTask.DetailReqVO.ReqTitNm == title {
-        return nil
-    }
+	if currentTask.DetailReqVO.ReqTitNm == title {
+		return nil
+	}
 
 	url := baseURL + "/api/update-title"
 	payload := updateTaskTitleRequest{
