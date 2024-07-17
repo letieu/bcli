@@ -75,7 +75,7 @@ var viewTaskCmd = &cobra.Command{
 				os.Exit(1)
 			}
 
-            mdText = fmt.Sprintf("# #%d\n%s", task.DetailReqVO.SeqNo, mdText)
+			mdText = fmt.Sprintf("# #%d\n%s", task.DetailReqVO.SeqNo, mdText)
 			view.RenderMarkdown(mdText)
 			return
 		}
@@ -125,24 +125,25 @@ var createTaskCmd = &cobra.Command{
 	Short: "Create a task",
 	Long:  `Create a task`,
 	Run: func(cmd *cobra.Command, args []string) {
-        title, _ := cmd.Flags().GetString("title")
-        template, _ := cmd.Flags().GetString("template")
+		title, _ := cmd.Flags().GetString("title")
+		template, _ := cmd.Flags().GetString("template")
 
-        templateFile, err := os.ReadFile(template)
-        if err != nil {
-            fmt.Println(err)
-            os.Exit(1)
-        }
+		templateFile, err := os.ReadFile(template)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
 
-        payload := paser.CreatePayload(string(templateFile), map[string]string{"title": title})
+		payload := paser.CreatePayload(string(templateFile), map[string]string{"title": title})
 
-        err = api.CreateTask([]byte(payload))
-        if err != nil {
-            fmt.Println(err)
-            os.Exit(1)
-        }
+		createdRes, err := api.CreateTask([]byte(payload))
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
 
-        fmt.Println("Task created")
+		fmt.Println("Task created")
+		fmt.Println(createdRes.ReqID)
 	},
 }
 
@@ -159,11 +160,11 @@ func init() {
 	viewTaskCmd.Flags().BoolP("web", "w", false, "Open task in web browser")
 	viewTaskCmd.Flags().BoolP("markdown", "m", false, "Render task content in markdown")
 
-    createTaskCmd.Flags().StringP("title", "t", "", "Task title")
-    createTaskCmd.Flags().StringP("template", "T", "", "Task template")
-    createTaskCmd.MarkFlagRequired("title")
-    createTaskCmd.MarkPersistentFlagFilename("template")
-    createTaskCmd.MarkFlagRequired("template")
+	createTaskCmd.Flags().StringP("title", "t", "", "Task title")
+	createTaskCmd.Flags().StringP("template", "T", "", "Task template")
+	createTaskCmd.MarkFlagRequired("title")
+	createTaskCmd.MarkPersistentFlagFilename("template")
+	createTaskCmd.MarkFlagRequired("template")
 }
 
 func editInEditor(content string) (string, error) {

@@ -187,6 +187,13 @@ type getTaskDetailResponse struct {
 	LstJbDetails []interface{} `json:"lstJbDetails"`
 }
 
+type CreateNewTaskResponse struct {
+	SaveFlg string `json:"saveFlg"`
+	MsgID   string `json:"msgId"`
+	SeqID   int    `json:"seqId"`
+	ReqID   string `json:"reqId"`
+}
+
 type Tasks struct {
 	Open []Task
 	InP  []Task
@@ -235,12 +242,12 @@ func ListTasks() (Tasks, error) {
 	}, nil
 }
 
-func CreateTask(payload []byte) error {
+func CreateTask(payload []byte) (CreateNewTaskResponse, error) {
 	url := baseURL + "/api/new-task/new-requirement"
 
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(payload))
 	if err != nil {
-		return err
+		return CreateNewTaskResponse{}, err
 	}
 
 	req.Header.Set("Accept", "application/json, text/plain, */*")
@@ -248,19 +255,31 @@ func CreateTask(payload []byte) error {
 	res, err := authClient.Do(req)
 
 	if err != nil {
-		return err
+		return CreateNewTaskResponse{}, err
 	}
 
 	defer res.Body.Close()
 
 	if res.StatusCode != 200 {
-		return &ApiError{
+		return CreateNewTaskResponse{}, &ApiError{
 			Status:   res.Status,
 			Response: res,
 		}
 	}
 
-	return nil
+    body, err := io.ReadAll(res.Body)
+
+    if err != nil {
+        return CreateNewTaskResponse{}, err
+    }
+
+    var taskResponse CreateNewTaskResponse
+    err = json.Unmarshal(body, &taskResponse)
+    if err != nil {
+        return CreateNewTaskResponse{}, err
+    }
+
+	return taskResponse, nil
 }
 
 func GetTaskDetail(taskId string) (getTaskDetailResponse, error) {
