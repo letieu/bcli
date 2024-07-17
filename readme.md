@@ -5,8 +5,8 @@
 - [x] View task
 - [x] Auth
 - [x] Punch
-- [ ] Create new task with template
-- [ ] Update task (Think about edit style)
+- [x] Create new task with template
+- [x] Update task
   - [x] Update content
   - [x] Update title
   - [ ] Add EP, Timework to task
@@ -17,16 +17,27 @@
 ## Usage
 ```bash
 # Help
-./bcli -h
-# Login
-./bcli auth login -f ~/.bcli/.credential.txt
-# List task
-./bcli task list
-# List task but cool
-./bcli task list -m
-# Punch
-./bcli punch
-# Update task, view task detail, etc, use help for more detail
-./bcli task -h
-```
+bcli -h
 
+# Login with credential file (contain user, password)
+bcli auth login -f credential.txt
+# Login with username, password directly
+bcli auth login -u <username> -p <password>
+
+# List task
+bcli task list
+# List task but cool
+bcli task list -m
+# Create new task with template bug.json
+bcli task create -t "[BE] Drop prod database" -T bug.json
+# Edit task title, content
+bcli task update 1234
+# More
+bcli task -h
+
+# Punch
+bcli punch
+
+# Generate shell completion. bash, zsh, fish, powershell
+bcli completion bash
+```
