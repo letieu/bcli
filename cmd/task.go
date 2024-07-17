@@ -34,12 +34,17 @@ var listTaskCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
-		markdown, _ := cmd.Flags().GetBool("markdown")
-		if markdown {
+		if markdown, _ := cmd.Flags().GetBool("markdown"); markdown {
 			view.PrintTaskListInMarkdown(&tasks)
-		} else {
-			view.PrintTaskList(&tasks)
-		}
+            return
+		} 
+
+        if simple, _ := cmd.Flags().GetBool("simple"); simple {
+            view.PrintSimpleTaskList(&tasks)
+            return
+        }
+
+	    view.PrintTaskList(&tasks)
 	},
 }
 
@@ -163,6 +168,7 @@ func init() {
 	taskCmd.AddCommand(updateTaskCmd)
 
 	listTaskCmd.Flags().BoolP("markdown", "m", false, "Render task list in markdown")
+	listTaskCmd.Flags().BoolP("simple", "s", false, "Render task list in simple mode")
 
 	viewTaskCmd.Flags().BoolP("web", "w", false, "Open task in web browser")
 	viewTaskCmd.Flags().BoolP("markdown", "m", false, "Render task content in markdown")
