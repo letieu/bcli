@@ -215,11 +215,19 @@ func ListTasks() (Tasks, error) {
 	req.Header.Set("Content-Type", "application/json;charset=utf-8")
 
 	res, err := authClient.Do(req)
+
 	if err != nil {
 		return Tasks{}, err
 	}
-	defer res.Body.Close()
 
+    if res.StatusCode != 200 {
+        return Tasks{}, &ApiError{
+            Status:   res.Status,
+            Response: res,
+        }
+    }
+
+	defer res.Body.Close()
 	body, err := io.ReadAll(res.Body)
 
 	if err != nil {

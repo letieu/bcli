@@ -31,6 +31,7 @@ var listTaskCmd = &cobra.Command{
 
 		if err != nil {
 			fmt.Println(err)
+            os.Exit(1)
 		}
 
 		markdown, _ := cmd.Flags().GetBool("markdown")
