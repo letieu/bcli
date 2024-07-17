@@ -6,31 +6,33 @@ import (
 )
 
 const taskDetailPrefix = "https://blueprint.cyberlogitec.com.vn/UI_PIM_001_1/"
+const ansiBold = "\033[1m"
+const ansiReset = "\033[0m"
 
 func PrintTaskInLine(task *api.Task) {
 	var seqNo = task.SeqNo
 	var taskNm = task.TaskNm
 
-	fmt.Printf(" 💲 #%d %s [%s]\n", seqNo, taskNm, task.ReqID)
+	fmt.Printf(" ⭐ %s%d%s %s\n", ansiBold, seqNo, ansiReset, taskNm)
 }
 
 func PrintTaskList(tasks *api.Tasks) {
-	fmt.Printf("\n📂 Open tasks (%d)\n", len(tasks.Open))
+	fmt.Printf("\n📂 %sOpen%s (%d)\n", ansiBold, ansiReset, len(tasks.Open))
 	for _, task := range tasks.Open {
 		PrintTaskInLine(&task)
 	}
 
-	fmt.Printf("\n⏳ In progress tasks (%d)\n", len(tasks.InP))
+	fmt.Printf("\n⏳ %sIn progress%s (%d)\n", ansiBold, ansiReset, len(tasks.InP))
 	for _, task := range tasks.InP {
 		PrintTaskInLine(&task)
 	}
 
-	fmt.Printf("\n✅ Done tasks (%d)\n", len(tasks.Done))
+	fmt.Printf("\n✅ %sDone%s (%d)\n", ansiBold, ansiReset, len(tasks.Done))
 	for _, task := range tasks.Done {
 		PrintTaskInLine(&task)
 	}
 
-    fmt.Println()
+	fmt.Println()
 }
 
 func PrintTaskListInMarkdown(tasks *api.Tasks) {
