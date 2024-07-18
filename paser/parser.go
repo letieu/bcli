@@ -57,5 +57,10 @@ func GetGitBranchName(taskNo int, taskTitle string) string {
 
     re := regexp.MustCompile(`\[[^\]]*\]`)
     name = re.ReplaceAllString(name, "")
+
+    // replace all non-alphanumeric characters with a dash
+    re = regexp.MustCompile(`[^a-zA-Z0-9-]`)
+    name = re.ReplaceAllString(name, "-")
+
     return name
 }
