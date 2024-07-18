@@ -66,7 +66,7 @@ var viewTaskCmd = &cobra.Command{
 
 		if web, _ := cmd.Flags().GetBool("web"); web {
 			link := fmt.Sprintf("%s%s", taskDetailPrefix, taskId)
-            fmt.Printf("Opening %s\n in web browser", link)
+			fmt.Printf("Opening %s\n in web browser", link)
 			cmd := exec.Command("xdg-open", link)
 			cmd.Run()
 			return
@@ -161,6 +161,37 @@ var createTaskCmd = &cobra.Command{
 	},
 }
 
+var branchName = &cobra.Command{
+	Use:   "branch",
+	Short: "Get branch name",
+	Long:  `Get branch name from task title`,
+	Run: func(cmd *cobra.Command, args []string) {
+		if len(args) == 0 {
+			fmt.Println("Please provide a task ID")
+			return
+		}
+
+		taskId, err := getTaskId(args[0])
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+        task, err := api.GetTaskDetail(taskId)
+
+        taskTitle := task.DetailReqVO.ReqTitNm
+        taskNo := task.DetailReqVO.SeqNo
+
+        branchName := paser.GetGitBranchName(taskNo, taskTitle)
+
+        if checkout, _ := cmd.Flags().GetBool("checkout"); checkout {
+            cmd := exec.Command("git", "checkout", "-b", branchName)
+            cmd.Run()
+        }
+        fmt.Println(branchName)
+	},
+}
+
 func init() {
 	rootCmd.AddCommand(taskCmd)
 
@@ -168,6 +199,7 @@ func init() {
 	taskCmd.AddCommand(createTaskCmd)
 	taskCmd.AddCommand(viewTaskCmd)
 	taskCmd.AddCommand(updateTaskCmd)
+    taskCmd.AddCommand(branchName)
 
 	listTaskCmd.Flags().BoolP("markdown", "m", false, "Render task list in markdown")
 	listTaskCmd.Flags().BoolP("simple", "s", false, "Render task list in simple mode")
@@ -181,6 +213,8 @@ func init() {
 	createTaskCmd.MarkFlagRequired("title")
 	createTaskCmd.MarkPersistentFlagFilename("template")
 	createTaskCmd.MarkFlagRequired("template")
+
+    branchName.Flags().BoolP("checkout", "c", false, "Checkout branch")
 }
 
 func editInEditor(content string) (string, error) {
