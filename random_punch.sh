@@ -7,4 +7,7 @@ DELAY=$((MINWAIT+RANDOM % (MAXWAIT-MINWAIT)))
 sleep $DELAY
 
 echo $DELAY
-./bcli auth login -f ~/.bcli/.credential.txt; ./bcli punch
+bcli auth login -f ~/.bcli/.credential.txt; bcli punch
+
+date
+echo -e "\n"
