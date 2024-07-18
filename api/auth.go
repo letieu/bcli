@@ -38,6 +38,11 @@ type UserInfo struct {
 
 func init() {
 	home, _ := os.UserHomeDir()
+    bcliDir := path.Join(home, ".bcli")
+    if _, err := os.Stat(bcliDir); os.IsNotExist(err) {
+        os.Mkdir(bcliDir, 0755)
+    }
+
 	cookiePath = path.Join(home, ".bcli", "cookies.json")
 
 	jar = cookiejar.NewPersistentJar(
