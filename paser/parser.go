@@ -45,7 +45,7 @@ func ParseBufText(bufText string) (string, string, error) {
 	return title, contentHtml, nil
 }
 
-func CreatePayload(templateString string, data map[string]string) string {
+func GetNewTaskPayload(templateString string, data map[string]string) string {
 	for key, value := range data {
 		templateString = strings.ReplaceAll(templateString, fmt.Sprintf("{{%s}}", key), value)
 	}

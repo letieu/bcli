@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"time"
 
 	"github.com/spf13/cobra"
 )
@@ -148,7 +149,14 @@ var createTaskCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
-		payload := paser.CreatePayload(string(templateFile), map[string]string{"title": title})
+
+        // due date is now + 1 week
+        dueDate := time.Now().AddDate(0, 0, 7).Format("20060102")
+
+		payload := paser.GetNewTaskPayload(string(templateFile), map[string]string{
+            "title": title,
+            "date": dueDate,
+        })
 
 		createdRes, err := api.CreateTask([]byte(payload))
 		if err != nil {
