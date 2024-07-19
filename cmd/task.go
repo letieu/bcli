@@ -36,16 +36,16 @@ var listTaskCmd = &cobra.Command{
 		}
 
 		if markdown, _ := cmd.Flags().GetBool("markdown"); markdown {
-			view.PrintTaskListInMarkdown(&tasks)
+			view.PrintTaskListInMarkdown(tasks)
 			return
 		}
 
 		if simple, _ := cmd.Flags().GetBool("simple"); simple {
-			view.PrintSimpleTaskList(&tasks)
+			view.PrintSimpleTaskList(tasks)
 			return
 		}
 
-		view.PrintTaskList(&tasks)
+		view.PrintTaskList(tasks)
 	},
 }
 

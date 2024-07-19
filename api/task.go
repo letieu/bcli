@@ -47,6 +47,7 @@ type Task struct {
 	IsUpdCate     bool   `json:"isUpdCate"`
 	IsUpdPriority bool   `json:"isUpdPriority"`
 	Mode          int    `json:"mode"`
+    ReqStsNm      string `json:"reqStsNm"`
 }
 
 type updateTaskContentRequest struct {
@@ -194,13 +195,7 @@ type CreateNewTaskResponse struct {
 	ReqID   string `json:"reqId"`
 }
 
-type Tasks struct {
-	Open []Task
-	InP  []Task
-	Done []Task
-}
-
-func ListTasks() (Tasks, error) {
+func ListTasks() ([]Task, error) {
 	url := baseURL + "/api/home/search-tasks"
 	method := "POST"
 
@@ -208,7 +203,7 @@ func ListTasks() (Tasks, error) {
 
 	req, err := http.NewRequest(method, url, bytes.NewBuffer(payload))
 	if err != nil {
-		return Tasks{}, err
+		return nil, err
 	}
 
 	req.Header.Set("Accept", "application/json, text/plain, */*")
@@ -217,11 +212,11 @@ func ListTasks() (Tasks, error) {
 	res, err := authClient.Do(req)
 
 	if err != nil {
-		return Tasks{}, err
+		return nil, err
 	}
 
 	if res.StatusCode != 200 {
-		return Tasks{}, &ApiError{
+		return nil, &ApiError{
 			Status:   res.Status,
 			Response: res,
 		}
@@ -232,22 +227,22 @@ func ListTasks() (Tasks, error) {
 
 	if err != nil {
 		fmt.Println(err)
-		return Tasks{}, err
+		return nil, err
 	}
 
 	var taskResponse tasksResponse
 
 	err = json.Unmarshal(body, &taskResponse)
-
 	if err != nil {
-		return Tasks{}, err
+		return nil, err
 	}
 
-	return Tasks{
-		Open: taskResponse.Data.LstTaskVO,
-		InP:  taskResponse.Data.LstWrkShft,
-		Done: taskResponse.Data.LstTskDn,
-	}, nil
+    var tasks []Task
+    tasks = append(tasks, taskResponse.Data.LstTaskVO...)
+    tasks = append(tasks, taskResponse.Data.LstWrkShft...)
+    tasks = append(tasks, taskResponse.Data.LstTskDn...)
+
+    return tasks, nil
 }
 
 func CreateTask(payload []byte) (CreateNewTaskResponse, error) {
