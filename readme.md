@@ -16,10 +16,13 @@
 
 ## Install
 
-Pre-built packages for Windows, macOS, and Linux are found on the
+Download pre-built packages for Linux, Windows and macOS are found on the
 [Releases](https://github.com/letieu/bcli/releases/) page.
 
-Install with go
+**Or** Install with `go install`
+```bash
+go install github.com/letieu/bcli@0.1.9
+```
 
 ## Usage
 ```bash
