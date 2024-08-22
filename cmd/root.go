@@ -13,7 +13,7 @@ var rootCmd = &cobra.Command{
 	Long:  `Bcli is command line interface for Blueprint.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if version, _ := cmd.Flags().GetBool("version"); version {
-			fmt.Println("Blueprint CLI 0.1.8")
+			fmt.Println("Blueprint CLI 0.1.9")
 		} else {
 			cmd.Help()
 		}
