@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"bcli/api"
-	"bcli/view"
+	"github.com/letieu/bcli/api"
+	"github.com/letieu/bcli/view"
 	"fmt"
 	"os"
 	"strings"

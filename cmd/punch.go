@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"bcli/api"
+	"github.com/letieu/bcli/api"
 	"fmt"
 	"os"
 

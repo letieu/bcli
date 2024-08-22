@@ -1,6 +1,6 @@
 package main
 
-import "bcli/cmd"
+import "github.com/letieu/bcli/cmd"
 
 func main() {
   cmd.Execute()

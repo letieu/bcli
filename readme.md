@@ -14,6 +14,13 @@
 - [ ] Improve
   - [ ] Default config (credential, cookie file path, ...)
 
+## Install
+
+Pre-built packages for Windows, macOS, and Linux are found on the
+[Releases](https://github.com/letieu/bcli/releases/) page.
+
+Install with go
+
 ## Usage
 ```bash
 # Help

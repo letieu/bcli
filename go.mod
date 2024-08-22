@@ -1,4 +1,4 @@
-module bcli
+module github.com/letieu/bcli
 
 go 1.22.3
 

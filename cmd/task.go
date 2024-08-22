@@ -1,9 +1,9 @@
 package cmd
 
 import (
-	"bcli/api"
-	"bcli/paser"
-	"bcli/view"
+	"github.com/letieu/bcli/api"
+	"github.com/letieu/bcli/paser"
+	"github.com/letieu/bcli/view"
 	"fmt"
 	"os"
 	"os/exec"
