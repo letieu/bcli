@@ -169,6 +169,56 @@ var createTaskCmd = &cobra.Command{
 	},
 }
 
+var updateHeadlessTaskCmd = &cobra.Command{
+	Use:   "update-headless",
+	Short: "Update a task in headless mode",
+	Long:  `Update a task in headless mode without opening an editor`,
+	Run: func(cmd *cobra.Command, args []string) {
+		if len(args) == 0 {
+			fmt.Println("Please provide a task ID")
+			return
+		}
+
+		taskId, err := getTaskId(args[0])
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		newTitle, _ := cmd.Flags().GetString("title")
+		newContent, _ := cmd.Flags().GetString("content")
+
+		if newTitle == "" && newContent == "" {
+			fmt.Println("Please provide a new title or new content")
+			return
+		}
+
+		currentTask, err := api.GetTaskDetail(taskId)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		if newTitle != "" {
+			err = api.UpdateTaskTitle(currentTask, newTitle)
+			if err != nil {
+				fmt.Println(err)
+				os.Exit(1)
+			}
+		}
+
+		if newContent != "" {
+			err = api.UpdateTaskContent(currentTask, newContent)
+			if err != nil {
+				fmt.Println(err)
+				os.Exit(1)
+			}
+		}
+
+		fmt.Println("Task updated")
+	},
+}
+
 var branchName = &cobra.Command{
 	Use:   "branch",
 	Short: "Get branch name",
@@ -207,6 +257,7 @@ func init() {
 	taskCmd.AddCommand(createTaskCmd)
 	taskCmd.AddCommand(viewTaskCmd)
 	taskCmd.AddCommand(updateTaskCmd)
+	taskCmd.AddCommand(updateHeadlessTaskCmd)
     taskCmd.AddCommand(branchName)
 
 	listTaskCmd.Flags().BoolP("markdown", "m", false, "Render task list in markdown")
@@ -221,6 +272,11 @@ func init() {
 	createTaskCmd.MarkFlagRequired("title")
 	createTaskCmd.MarkPersistentFlagFilename("template")
 	createTaskCmd.MarkFlagRequired("template")
+
+    updateHeadlessTaskCmd.Flags().StringP("title", "t", "", "New task title")
+    updateHeadlessTaskCmd.Flags().StringP("content", "c", "", "New task content")
+    updateHeadlessTaskCmd.MarkFlagRequired("title")
+    updateHeadlessTaskCmd.MarkFlagRequired("content")
 
     branchName.Flags().BoolP("checkout", "c", false, "Checkout branch")
 }
