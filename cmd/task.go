@@ -1,10 +1,10 @@
 package cmd
 
 import (
+	"fmt"
 	"github.com/letieu/bcli/api"
 	"github.com/letieu/bcli/paser"
 	"github.com/letieu/bcli/view"
-	"fmt"
 	"os"
 	"os/exec"
 	"time"
@@ -141,6 +141,7 @@ var createTaskCmd = &cobra.Command{
 	Long:  `Create a task`,
 	Run: func(cmd *cobra.Command, args []string) {
 		title, _ := cmd.Flags().GetString("title")
+		content, _ := cmd.Flags().GetString("content")
 		template, _ := cmd.Flags().GetString("template")
 
 		templateFile, err := os.ReadFile(template)
@@ -149,14 +150,13 @@ var createTaskCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
-
-        // due date is now + 1 week
-        dueDate := time.Now().AddDate(0, 0, 7).Format("20060102")
+		// due date is now + 1 week
+		dueDate := time.Now().AddDate(0, 0, 7).Format("20060102")
 
 		payload := paser.GetNewTaskPayload(string(templateFile), map[string]string{
-            "title": title,
-            "date": dueDate,
-        })
+			"title": title,
+			"date":  dueDate,
+		})
 
 		createdRes, err := api.CreateTask([]byte(payload))
 		if err != nil {
@@ -166,6 +166,15 @@ var createTaskCmd = &cobra.Command{
 
 		fmt.Println("Task created")
 		fmt.Println(createdRes.ReqID)
+
+        if content != "" {
+		    task, err := api.GetTaskDetail(createdRes.ReqID)
+            err = api.UpdateTaskContent(task, content)
+            if err != nil {
+                fmt.Println(err)
+                os.Exit(1)
+            }
+        }
 	},
 }
 
@@ -235,18 +244,18 @@ var branchName = &cobra.Command{
 			os.Exit(1)
 		}
 
-        task, err := api.GetTaskDetail(taskId)
+		task, err := api.GetTaskDetail(taskId)
 
-        taskTitle := task.DetailReqVO.ReqTitNm
-        taskNo := task.DetailReqVO.SeqNo
+		taskTitle := task.DetailReqVO.ReqTitNm
+		taskNo := task.DetailReqVO.SeqNo
 
-        branchName := paser.GetGitBranchName(taskNo, taskTitle)
+		branchName := paser.GetGitBranchName(taskNo, taskTitle)
 
-        if checkout, _ := cmd.Flags().GetBool("checkout"); checkout {
-            cmd := exec.Command("git", "checkout", "-b", branchName)
-            cmd.Run()
-        }
-        fmt.Println(branchName)
+		if checkout, _ := cmd.Flags().GetBool("checkout"); checkout {
+			cmd := exec.Command("git", "checkout", "-b", branchName)
+			cmd.Run()
+		}
+		fmt.Println(branchName)
 	},
 }
 
@@ -258,7 +267,7 @@ func init() {
 	taskCmd.AddCommand(viewTaskCmd)
 	taskCmd.AddCommand(updateTaskCmd)
 	taskCmd.AddCommand(updateHeadlessTaskCmd)
-    taskCmd.AddCommand(branchName)
+	taskCmd.AddCommand(branchName)
 
 	listTaskCmd.Flags().BoolP("markdown", "m", false, "Render task list in markdown")
 	listTaskCmd.Flags().BoolP("simple", "s", false, "Render task list in simple mode")
@@ -272,13 +281,14 @@ func init() {
 	createTaskCmd.MarkFlagRequired("title")
 	createTaskCmd.MarkPersistentFlagFilename("template")
 	createTaskCmd.MarkFlagRequired("template")
+    createTaskCmd.Flags().StringP("content", "c", "", "Task content")
 
-    updateHeadlessTaskCmd.Flags().StringP("title", "t", "", "New task title")
-    updateHeadlessTaskCmd.Flags().StringP("content", "c", "", "New task content")
-    updateHeadlessTaskCmd.MarkFlagRequired("title")
-    updateHeadlessTaskCmd.MarkFlagRequired("content")
+	updateHeadlessTaskCmd.Flags().StringP("title", "t", "", "New task title")
+	updateHeadlessTaskCmd.Flags().StringP("content", "c", "", "New task content")
+	updateHeadlessTaskCmd.MarkFlagRequired("title")
+	updateHeadlessTaskCmd.MarkFlagRequired("content")
 
-    branchName.Flags().BoolP("checkout", "c", false, "Checkout branch")
+	branchName.Flags().BoolP("checkout", "c", false, "Checkout branch")
 }
 
 func editInEditor(content string) (string, error) {
