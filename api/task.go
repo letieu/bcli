@@ -47,7 +47,7 @@ type Task struct {
 	IsUpdCate     bool   `json:"isUpdCate"`
 	IsUpdPriority bool   `json:"isUpdPriority"`
 	Mode          int    `json:"mode"`
-    ReqStsNm      string `json:"reqStsNm"`
+	ReqStsNm      string `json:"reqStsNm"`
 }
 
 type updateTaskContentRequest struct {
@@ -237,12 +237,12 @@ func ListTasks() ([]Task, error) {
 		return nil, err
 	}
 
-    var tasks []Task
-    tasks = append(tasks, taskResponse.Data.LstTaskVO...)
-    tasks = append(tasks, taskResponse.Data.LstWrkShft...)
-    tasks = append(tasks, taskResponse.Data.LstTskDn...)
+	var tasks []Task
+	tasks = append(tasks, taskResponse.Data.LstTaskVO...)
+	tasks = append(tasks, taskResponse.Data.LstWrkShft...)
+	tasks = append(tasks, taskResponse.Data.LstTskDn...)
 
-    return tasks, nil
+	return tasks, nil
 }
 
 func CreateTask(payload []byte) (CreateNewTaskResponse, error) {
@@ -476,9 +476,32 @@ func SearchTaskByNo(seqNo string) (string, error) {
 		return "", err
 	}
 
-    if len(taskResponse.LstReq) == 0 {
-        return "", fmt.Errorf("Task not found")
-    }
+	if len(taskResponse.LstReq) == 0 {
+		return "", fmt.Errorf("Task not found")
+	}
 
-    return taskResponse.LstReq[0].ReqId, nil
+	return taskResponse.LstReq[0].ReqId, nil
+}
+
+func UpdateTaskPoint(
+	currentTask getTaskDetailResponse,
+    payload []byte,
+) error {
+	url := baseURL + "/api/save-req-job-detail"
+
+	req, err := http.NewRequest("PUT", url, bytes.NewBuffer(payload))
+	if err != nil {
+		return err
+	}
+
+	req.Header.Set("Accept", "application/json, text/plain, */*")
+	req.Header.Set("Content-Type", "application/json;charset=utf-8")
+	res, err := authClient.Do(req)
+
+	if err != nil {
+		return err
+	}
+
+	defer res.Body.Close()
+	return nil
 }

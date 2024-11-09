@@ -1,13 +1,16 @@
 package cmd
 
 import (
+	"bytes"
 	"fmt"
+	"os"
+	"os/exec"
+	"text/template"
+	"time"
+
 	"github.com/letieu/bcli/api"
 	"github.com/letieu/bcli/paser"
 	"github.com/letieu/bcli/view"
-	"os"
-	"os/exec"
-	"time"
 
 	"github.com/spf13/cobra"
 )
@@ -167,14 +170,14 @@ var createTaskCmd = &cobra.Command{
 		fmt.Println("Task created")
 		fmt.Println(createdRes.ReqID)
 
-        if content != "" {
-		    task, err := api.GetTaskDetail(createdRes.ReqID)
-            err = api.UpdateTaskContent(task, content)
-            if err != nil {
-                fmt.Println(err)
-                os.Exit(1)
-            }
-        }
+		if content != "" {
+			task, err := api.GetTaskDetail(createdRes.ReqID)
+			err = api.UpdateTaskContent(task, content)
+			if err != nil {
+				fmt.Println(err)
+				os.Exit(1)
+			}
+		}
 	},
 }
 
@@ -228,6 +231,68 @@ var updateHeadlessTaskCmd = &cobra.Command{
 	},
 }
 
+var addPointCmd = &cobra.Command{
+	Use:   "add-point",
+	Short: "Add a point to a task",
+	Long:  `Add a point to a task`,
+	Run: func(cmd *cobra.Command, args []string) {
+		if len(args) == 0 {
+			fmt.Println("Please provide a task ID")
+			return
+		}
+
+		taskId, err := getTaskId(args[0])
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		templatePath, err := cmd.Flags().GetString("template")
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		volume, err := cmd.Flags().GetInt("volume")
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		currentTask, err := api.GetTaskDetail(taskId)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		tmpl, err := template.ParseFiles(templatePath)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		data := map[string]any{
+			"ReqId":      currentTask.DetailReqVO.ReqID,
+			"Volume":     volume,
+			"TotalPoint": int(volume) * 50 + 30,
+		}
+		var buf bytes.Buffer
+		if err := tmpl.Execute(&buf, data); err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+        payload := buf.Bytes()
+		err = api.UpdateTaskPoint(currentTask, payload)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		fmt.Println("Point added")
+	},
+}
+
 var branchName = &cobra.Command{
 	Use:   "branch",
 	Short: "Get branch name",
@@ -268,6 +333,7 @@ func init() {
 	taskCmd.AddCommand(updateTaskCmd)
 	taskCmd.AddCommand(updateHeadlessTaskCmd)
 	taskCmd.AddCommand(branchName)
+	taskCmd.AddCommand(addPointCmd)
 
 	listTaskCmd.Flags().BoolP("markdown", "m", false, "Render task list in markdown")
 	listTaskCmd.Flags().BoolP("simple", "s", false, "Render task list in simple mode")
@@ -281,12 +347,17 @@ func init() {
 	createTaskCmd.MarkFlagRequired("title")
 	createTaskCmd.MarkPersistentFlagFilename("template")
 	createTaskCmd.MarkFlagRequired("template")
-    createTaskCmd.Flags().StringP("content", "c", "", "Task content")
+	createTaskCmd.Flags().StringP("content", "c", "", "Task content")
 
 	updateHeadlessTaskCmd.Flags().StringP("title", "t", "", "New task title")
 	updateHeadlessTaskCmd.Flags().StringP("content", "c", "", "New task content")
 	updateHeadlessTaskCmd.MarkFlagRequired("title")
 	updateHeadlessTaskCmd.MarkFlagRequired("content")
+
+	addPointCmd.Flags().IntP("volume", "v", 0, "Point volume")
+	addPointCmd.Flags().StringP("template", "T", "", "Point template")
+	addPointCmd.MarkFlagRequired("volume")
+	addPointCmd.MarkPersistentFlagFilename("template")
 
 	branchName.Flags().BoolP("checkout", "c", false, "Checkout branch")
 }

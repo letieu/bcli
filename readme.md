@@ -9,7 +9,8 @@
 - [x] Update task
   - [x] Update content
   - [x] Update title
-  - [ ] Add EP, Timework to task
+  - [x] Add EP
+  - [ ] Add timework
 - [ ] Comment to task
 - [ ] Improve
   - [ ] Default config (credential, cookie file path, ...)
