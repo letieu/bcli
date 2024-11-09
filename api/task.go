@@ -505,3 +505,26 @@ func UpdateTaskPoint(
 	defer res.Body.Close()
 	return nil
 }
+
+func AddTimeWork(
+    currentTask getTaskDetailResponse,
+    payload []byte,
+) error {
+    url := baseURL + "/api/task-details/add-actual-effort-point"
+
+    req, err := http.NewRequest("POST", url, bytes.NewBuffer(payload))
+    if err != nil {
+        return err
+    }
+
+    req.Header.Set("Accept", "application/json, text/plain, */*")
+    req.Header.Set("Content-Type", "application/json;charset=utf-8")
+    res, err := authClient.Do(req)
+
+    if err != nil {
+        return err
+    }
+
+    defer res.Body.Close()
+    return nil
+}

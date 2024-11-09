@@ -274,7 +274,86 @@ var addPointCmd = &cobra.Command{
 		data := map[string]any{
 			"ReqId":      currentTask.DetailReqVO.ReqID,
 			"Volume":     volume,
-			"TotalPoint": int(volume) * 50 + 30,
+			"TotalPoint": int(volume)*50 + 30,
+		}
+		var buf bytes.Buffer
+		if err := tmpl.Execute(&buf, data); err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		payload := buf.Bytes()
+		err = api.UpdateTaskPoint(currentTask, payload)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		fmt.Println("Point added")
+	},
+}
+
+var addTimeWork = &cobra.Command{
+	Use:   "add-time",
+	Short: "Add time work to a task",
+	Long:  `Add time work to a task`,
+	Run: func(cmd *cobra.Command, args []string) {
+		if len(args) == 0 {
+			fmt.Println("Please provide a task ID")
+			return
+		}
+
+		taskId, err := getTaskId(args[0])
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		templatePath, err := cmd.Flags().GetString("template")
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		hour, err := cmd.Flags().GetInt("hour")
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+		date, err := cmd.Flags().GetString("date")
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		currentTask, err := api.GetTaskDetail(taskId)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		tmpl, err := template.ParseFiles(templatePath)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		parsedDate, err := time.Parse("20060102", date)
+		if err != nil {
+			fmt.Println("Invalid date format. Please use YYYYMMDD.")
+			os.Exit(1)
+		}
+		formattedDate := parsedDate.Format("Jan 02, 2006")
+
+		data := map[string]any{
+			// Req_001
+			"ReqId": currentTask.DetailReqVO.ReqID,
+			// 20241107
+			"WrkDt": date,
+			// 2 Hour
+			"WrkTm": fmt.Sprintf("%d Hour", hour),
+			//Nov 07, 2024
+			"Dt": formattedDate,
 		}
 		var buf bytes.Buffer
 		if err := tmpl.Execute(&buf, data); err != nil {
@@ -283,13 +362,13 @@ var addPointCmd = &cobra.Command{
 		}
 
         payload := buf.Bytes()
-		err = api.UpdateTaskPoint(currentTask, payload)
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
+        err = api.AddTimeWork(currentTask, payload)
+        if err != nil {
+            fmt.Println(err)
+            os.Exit(1)
+        }
 
-		fmt.Println("Point added")
+        fmt.Println("Time work added")
 	},
 }
 
@@ -334,6 +413,7 @@ func init() {
 	taskCmd.AddCommand(updateHeadlessTaskCmd)
 	taskCmd.AddCommand(branchName)
 	taskCmd.AddCommand(addPointCmd)
+	taskCmd.AddCommand(addTimeWork)
 
 	listTaskCmd.Flags().BoolP("markdown", "m", false, "Render task list in markdown")
 	listTaskCmd.Flags().BoolP("simple", "s", false, "Render task list in simple mode")
@@ -357,7 +437,16 @@ func init() {
 	addPointCmd.Flags().IntP("volume", "v", 0, "Point volume")
 	addPointCmd.Flags().StringP("template", "T", "", "Point template")
 	addPointCmd.MarkFlagRequired("volume")
+	addPointCmd.MarkFlagRequired("template")
 	addPointCmd.MarkPersistentFlagFilename("template")
+
+	addTimeWork.Flags().IntP("hour", "H", 0, "Hour")
+	addTimeWork.Flags().StringP("date", "d", "", "Date")
+	addTimeWork.Flags().StringP("template", "T", "", "Time work template")
+	addTimeWork.MarkFlagRequired("hour")
+	addTimeWork.MarkFlagRequired("date")
+	addTimeWork.MarkFlagRequired("template")
+	addTimeWork.MarkPersistentFlagFilename("template")
 
 	branchName.Flags().BoolP("checkout", "c", false, "Checkout branch")
 }
