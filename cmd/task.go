@@ -167,7 +167,6 @@ var createTaskCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
-		fmt.Println("Task created")
 		fmt.Println(createdRes.ReqID)
 
 		if content != "" {
@@ -354,6 +353,8 @@ var addTimeWork = &cobra.Command{
 			"WrkTm": fmt.Sprintf("%d Hour", hour),
 			//Nov 07, 2024
 			"Dt": formattedDate,
+			// 120
+			"ActEfrtMnt": hour * 60,
 		}
 		var buf bytes.Buffer
 		if err := tmpl.Execute(&buf, data); err != nil {
@@ -361,14 +362,14 @@ var addTimeWork = &cobra.Command{
 			os.Exit(1)
 		}
 
-        payload := buf.Bytes()
-        err = api.AddTimeWork(currentTask, payload)
-        if err != nil {
-            fmt.Println(err)
-            os.Exit(1)
-        }
+		payload := buf.Bytes()
+		err = api.AddTimeWork(currentTask, payload)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
 
-        fmt.Println("Time work added")
+		fmt.Println("Time work added")
 	},
 }
 

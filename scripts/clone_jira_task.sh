@@ -2,6 +2,7 @@ JIRA_URL="https://oneline.atlassian.net"
 JIRA_API_ENDPOINT="$JIRA_URL/rest/api/3/search"
 
 PROJECT="COM"
+
 USERNAME="xxx"
 API_TOKEN="XXX"
 
@@ -21,8 +22,13 @@ total_issues=$(echo "$response" | jq '.total')
 # Print the total number of issues
 echo "Total issues: $total_issues"
 
+json_output=$(echo '{}' | jq '.')
+
+# Read issues into an array
+mapfile -t issues < <(echo "$response" | jq -c '.issues[]')
+
 # Iterate over each issue and create blueprints task
-echo "$response" | jq -c '.issues[]' | while read -r issue; do
+for issue in "${issues[@]}"; do
   issue_key=$(echo "$issue" | jq -r '.key')
   issue_summary=$(echo "$issue" | jq -r '.fields.summary')
   parent_summary=$(echo "$issue" | jq -r '.fields.parent.fields.summary // "No parent summary"')
@@ -31,11 +37,11 @@ echo "$response" | jq -c '.issues[]' | while read -r issue; do
 
   content="<p><strong>Task Ref:</strong> <a href=\"$encoded_url\">$url</a></p>
   <p><strong>US description:</strong> $parent_summary</p>
-  <p><strong>Task:</strong> [FE] [BE] $issue_summary</p>"
+  <p><strong>Task:</strong> $issue_summary</p>"
 
-  bcli task create -T $TASK_TEMPLATE -t "$issue_summary" -c "$content"
-  echo "Created task for $issue_key"
+  bluePrintId=$(bcli task create -T $TASK_TEMPLATE -t "$issue_summary" -c "$content")
 
-  ## escape the loop
-  break
+  json_output=$(echo "$json_output" | jq --arg key "$issue_key" --arg url "$bluePrintId" '. + {($key): $url}')
 done
+
+echo $json_output
