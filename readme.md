@@ -11,6 +11,7 @@
   - [x] Update title
   - [x] Add EP
   - [x] Add timework
+  - [x] Add file
 - [ ] Comment to task
 - [ ] Improve
   - [ ] Default config (credential, cookie file path, ...)
@@ -61,6 +62,9 @@ bcli task add-time 23565 -H 2 -T ~/.bcli/templates/add-time-dev.json -d 20241105
 # Add point to task 23565 with volume 2
 # template base on: /api/save-req-job-detail
 bcli task add-point 23565 -p 2 -T /home/tieu/.bcli/templates/add-point-dev.json
+
+# Add file
+bcli task add-file PRQ20241107000000188 -f ~/Downloads/image1.png
 
 # More
 bcli task -h

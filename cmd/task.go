@@ -292,7 +292,7 @@ var addPointCmd = &cobra.Command{
 	},
 }
 
-var addTimeWork = &cobra.Command{
+var addTimeWorkCmd = &cobra.Command{
 	Use:   "add-time",
 	Short: "Add time work to a task",
 	Long:  `Add time work to a task`,
@@ -373,6 +373,74 @@ var addTimeWork = &cobra.Command{
 	},
 }
 
+var addFileCmd = &cobra.Command{
+	Use:   "add-file",
+	Short: "Add file to a task",
+	Long:  `Add file to a task`,
+	Run: func(cmd *cobra.Command, args []string) {
+		if len(args) == 0 {
+			fmt.Println("Please provide a task ID")
+			return
+		}
+
+		taskId, err := getTaskId(args[0])
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		filePath, err := cmd.Flags().GetString("file")
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		currentTask, err := api.GetTaskDetail(taskId)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		monthStr := time.Now().Format("200601")
+		bizFolder := fmt.Sprintf("/PIM_REQ/%s/PRQ", monthStr)
+		childFolder := "PRQ"
+
+		uploadRes, err := api.UploadFile(filePath, bizFolder, childFolder)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		file, err := os.Open(filePath)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+		fileStat, err := file.Stat()
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		fileSize := fileStat.Size()
+		fileSizeStr := fmt.Sprintf("%.1f KB", float64(fileSize)/1024)
+
+		err = api.AddFileToTask(
+			currentTask,
+			uploadRes.LstFlNm[0],
+			fileSizeStr,
+			fmt.Sprintf("%s/%s", uploadRes.BizFolder, uploadRes.LstFlNm[0]),
+			uploadRes.BizFolder,
+		)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		fmt.Println("File added")
+	},
+}
+
 var branchName = &cobra.Command{
 	Use:   "branch",
 	Short: "Get branch name",
@@ -414,7 +482,8 @@ func init() {
 	taskCmd.AddCommand(updateHeadlessTaskCmd)
 	taskCmd.AddCommand(branchName)
 	taskCmd.AddCommand(addPointCmd)
-	taskCmd.AddCommand(addTimeWork)
+	taskCmd.AddCommand(addTimeWorkCmd)
+	taskCmd.AddCommand(addFileCmd)
 
 	listTaskCmd.Flags().BoolP("markdown", "m", false, "Render task list in markdown")
 	listTaskCmd.Flags().BoolP("simple", "s", false, "Render task list in simple mode")
@@ -441,13 +510,16 @@ func init() {
 	addPointCmd.MarkFlagRequired("template")
 	addPointCmd.MarkPersistentFlagFilename("template")
 
-	addTimeWork.Flags().IntP("hour", "H", 0, "Hour")
-	addTimeWork.Flags().StringP("date", "d", "", "Date")
-	addTimeWork.Flags().StringP("template", "T", "", "Time work template")
-	addTimeWork.MarkFlagRequired("hour")
-	addTimeWork.MarkFlagRequired("date")
-	addTimeWork.MarkFlagRequired("template")
-	addTimeWork.MarkPersistentFlagFilename("template")
+	addTimeWorkCmd.Flags().IntP("hour", "H", 0, "Hour")
+	addTimeWorkCmd.Flags().StringP("date", "d", "", "Date")
+	addTimeWorkCmd.Flags().StringP("template", "T", "", "Time work template")
+	addTimeWorkCmd.MarkFlagRequired("hour")
+	addTimeWorkCmd.MarkFlagRequired("date")
+	addTimeWorkCmd.MarkFlagRequired("template")
+	addTimeWorkCmd.MarkPersistentFlagFilename("template")
+
+	addFileCmd.Flags().StringP("file", "f", "", "File path")
+	addFileCmd.MarkFlagRequired("file")
 
 	branchName.Flags().BoolP("checkout", "c", false, "Checkout branch")
 }

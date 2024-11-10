@@ -5,7 +5,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"mime/multipart"
 	"net/http"
+	"os"
+	"path/filepath"
 )
 
 var baseURL = "https://blueprint.cyberlogitec.com.vn"
@@ -193,6 +196,25 @@ type CreateNewTaskResponse struct {
 	MsgID   string `json:"msgId"`
 	SeqID   int    `json:"seqId"`
 	ReqID   string `json:"reqId"`
+}
+
+type addFileToTaskRequest struct {
+	PstId     string                  `json:"pstId"`
+	BizFolder string                  `json:"bizFolder"`
+	FilesInfo []addFileToTaskFileInfo `json:"filesInfo"`
+}
+
+type addFileToTaskFileInfo struct {
+	FileNm     string `json:"fileNm"`
+	Size       string `json:"size"`
+	StatusMode string `json:"statusMode"`
+	AtchTpCd   string `json:"atchTpCd"`
+	UrlImg     string `json:"urlImg"`
+}
+
+type UploadFileResponse struct {
+	LstFlNm   []string `json:"lstFlNm"`
+	BizFolder string   `json:"bizFolder"`
 }
 
 func ListTasks() ([]Task, error) {
@@ -485,7 +507,7 @@ func SearchTaskByNo(seqNo string) (string, error) {
 
 func UpdateTaskPoint(
 	currentTask getTaskDetailResponse,
-    payload []byte,
+	payload []byte,
 ) error {
 	url := baseURL + "/api/save-req-job-detail"
 
@@ -507,24 +529,150 @@ func UpdateTaskPoint(
 }
 
 func AddTimeWork(
-    currentTask getTaskDetailResponse,
-    payload []byte,
+	currentTask getTaskDetailResponse,
+	payload []byte,
 ) error {
-    url := baseURL + "/api/task-details/add-actual-effort-point"
+	url := baseURL + "/api/task-details/add-actual-effort-point"
 
-    req, err := http.NewRequest("POST", url, bytes.NewBuffer(payload))
-    if err != nil {
-        return err
-    }
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(payload))
+	if err != nil {
+		return err
+	}
 
-    req.Header.Set("Accept", "application/json, text/plain, */*")
-    req.Header.Set("Content-Type", "application/json;charset=utf-8")
-    res, err := authClient.Do(req)
+	req.Header.Set("Accept", "application/json, text/plain, */*")
+	req.Header.Set("Content-Type", "application/json;charset=utf-8")
+	res, err := authClient.Do(req)
 
-    if err != nil {
-        return err
+	if err != nil {
+		return err
+	}
+
+	defer res.Body.Close()
+	return nil
+}
+
+// UploadFile uploads a file to a specified business folder and child folder.
+//
+// filePath: the path to the file to be uploaded.
+//
+// bizFolder: the business folder where the file will be uploaded (e.g., /PIM_REQ/202411/PRQ).
+//
+// childFolder: the child folder within the business folder (e.g., PRQ).
+func UploadFile(
+	filePath string,
+	bizFolder string,
+	childFolder string,
+) (UploadFileResponse, error) {
+	url := baseURL + "/api/uploadFile"
+
+	payload := &bytes.Buffer{}
+	writer := multipart.NewWriter(payload)
+
+	file, err := os.Open(filePath)
+	if err != nil {
+		return UploadFileResponse{}, err
+	}
+
+	part, err := writer.CreateFormFile("files", filepath.Base(filePath))
+	if err != nil {
+		return UploadFileResponse{}, err
+	}
+
+	_, err = io.Copy(part, file)
+	if err != nil {
+		return UploadFileResponse{}, err
+	}
+
+	_ = writer.WriteField("bizFolder", bizFolder)
+	_ = writer.WriteField("childFolder", childFolder)
+
+	err = writer.Close()
+	if err != nil {
+		return UploadFileResponse{}, err
+	}
+
+	req, err := http.NewRequest("POST", url, payload)
+	if err != nil {
+		return UploadFileResponse{}, err
+	}
+
+	req.Header.Set("Content-Type", writer.FormDataContentType())
+	req.Header.Set("Accept", "*/*")
+	req.Header.Set("Accept-Language", "en-US,en;q=0.5")
+	req.Header.Set("Accept-Encoding", "gzip, deflate, br, zstd")
+
+	res, err := authClient.Do(req)
+	if err != nil {
+		return UploadFileResponse{}, err
+	}
+
+
+    if res.StatusCode != 200 {
+        return UploadFileResponse{}, &ApiError{
+            Status:   res.Status,
+            Response: res,
+        }
     }
 
     defer res.Body.Close()
-    return nil
+
+    body, err := io.ReadAll(res.Body)
+    if err != nil {
+        return UploadFileResponse{}, err
+    }
+
+    var uploadResponse UploadFileResponse
+    err = json.Unmarshal(body, &uploadResponse)
+    if err != nil {
+        return UploadFileResponse{}, err
+    }
+
+    return uploadResponse, nil
+}
+
+func AddFileToTask(
+	currentTask getTaskDetailResponse,
+	fileName string,
+	size string,
+	urlImg string,
+	bizFolder string,
+) error {
+	url := baseURL + "/api/managerFile"
+
+	filesInfo := []addFileToTaskFileInfo{
+		{
+			FileNm:     fileName,
+			Size:       size,
+			StatusMode: "0",
+			AtchTpCd:   "PRQ",
+			UrlImg:     urlImg,
+		},
+	}
+
+	payload := addFileToTaskRequest{
+		PstId:     currentTask.DetailReqVO.ReqID,
+		BizFolder: bizFolder,
+		FilesInfo: filesInfo,
+	}
+
+	jsonPayload, err := json.Marshal(payload)
+	if err != nil {
+		return err
+	}
+
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonPayload))
+	if err != nil {
+		return err
+	}
+
+	req.Header.Set("Accept", "application/json, text/plain, */*")
+	req.Header.Set("Content-Type", "application/json;charset=utf-8")
+	res, err := authClient.Do(req)
+
+	if err != nil {
+		return err
+	}
+
+	defer res.Body.Close()
+	return nil
 }
