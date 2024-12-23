@@ -23,7 +23,7 @@ Download pre-built packages for Linux, Windows and macOS are found on the
 
 **Or** Install with `go install`
 ```bash
-go install github.com/letieu/bcli@0.1.15
+go install github.com/letieu/bcli@main
 ```
 
 ## Usage
