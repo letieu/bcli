@@ -8,25 +8,17 @@
       "$parent": 0
     },
     {
-      "utPnt": 1,
-      "jbId": "JOB20231025000000001",
-      "jbNm": "complexity 1",
-      "itmAmt": 1,
-      "$parent": "JOB20220616000000001",
-      "prntNm": "Development"
-    },
-    {
-      "utPnt": {{.Volume}},
+      "utPnt": 50,
       "jbId": "JOB20220616000000004",
       "jbNm": "Low",
-      "itmAmt": "3",
+      "itmAmt": "{{.Volume}}",
       "$parent": "JOB20220616000000001",
       "prntNm": "Development"
     }
   ],
   "totalPoint": {{.TotalPoint}},
   "reqId": "{{.ReqId}}",
-  "cmtCtnt": "",
+  "cmtCtnt": "<div class=\"system-comment\"> • Added Point: </div>   <div style=\"margin-left: 10px\"> <b>&nbsp;Development:</b></div>  <div style=\"margin-left: 10px\"><i> &nbsp;&nbsp;Low: </i>150 </div> ",
   "pjtId": "PJT20220609000000001",
   "subPjtId": "PJT20230329000000002",
   "action": "REQ_WTC_EFRT"
