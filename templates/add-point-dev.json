@@ -1,0 +1,33 @@
+{
+  "categoryList": [
+    {
+      "utPnt": 0,
+      "jbId": "JOB20220616000000001",
+      "jbNm": "Development",
+      "itmAmt": 0,
+      "$parent": 0
+    },
+    {
+      "utPnt": 1,
+      "jbId": "JOB20231025000000001",
+      "jbNm": "complexity 1",
+      "itmAmt": 1,
+      "$parent": "JOB20220616000000001",
+      "prntNm": "Development"
+    },
+    {
+      "utPnt": {{.Volume}},
+      "jbId": "JOB20220616000000004",
+      "jbNm": "Low",
+      "itmAmt": "3",
+      "$parent": "JOB20220616000000001",
+      "prntNm": "Development"
+    }
+  ],
+  "totalPoint": {{.TotalPoint}},
+  "reqId": "{{.ReqId}}",
+  "cmtCtnt": "",
+  "pjtId": "PJT20220609000000001",
+  "subPjtId": "PJT20230329000000002",
+  "action": "REQ_WTC_EFRT"
+}

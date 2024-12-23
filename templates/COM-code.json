@@ -1,0 +1,910 @@
+{
+  "requirementVO": {
+    "pjtId": "PJT20220609000000001",
+    "pjtNm": "Chorus",
+    "cateId": "PJT20230414000000001",
+    "cateNm": "COM",
+    "prntReqId": "0",
+    "subPjtId": "PJT20230329000000002",
+    "mode": 1,
+    "jbTpCd": "REQ_JOB_TPRPT",
+    "jbTpNm": "Reporting",
+    "bizProcId": "ABP20230315000000001",
+    "bizProcNm": "Group 2 Short Process",
+    "reqCtnt": "<p>update later</p>",
+    "reqTxtCtnt": "update later",
+    "itrtnId": "ITR20220609000000001",
+    "imptTpCd": "IMPT_TP_CDLOW",
+    "imptNm": "Low",
+    "reqTitNm": "{{title}}",
+    "crntReqCntn": "",
+    "prvsReqCntn": "",
+    "emailFlg": "N",
+    "arrSkd": [
+      {
+        "asgnList": [
+          {
+            "usrId": "tieule",
+            "usrNm": "Tieu Le"
+          }
+        ],
+        "className": "com.dou.pim.models.UserAssignVO",
+        "efrtPctNo": 5,
+        "estmDueDt": "{{date}}",
+        "mode": 0,
+        "pctNo": 5,
+        "phsCd": "PIM_PHS_CDREG",
+        "phsNm": "Register",
+        "plnDueDt": "{{date}}",
+        "plnStDt": "{{date}}",
+        "prntPhsId": "0",
+        "procPhsId": "APP20230315000000017",
+        "wrkHrNo": 0,
+        "usrId": "tieule",
+        "usrNm": "Tieu Le"
+      },
+      {
+        "asgnList": [
+          {
+            "usrId": "cuongle",
+            "usrNm": "Cuong Le"
+          },
+          {
+            "usrId": "daiho",
+            "usrNm": "Dai Ho"
+          },
+          {
+            "usrId": "duyenpham",
+            "usrNm": "Duyen Pham"
+          },
+          {
+            "usrId": "hangnld",
+            "usrNm": "Hang Nguyen Le Dieu"
+          },
+          {
+            "usrId": "hanhle",
+            "usrNm": "Hanh Le"
+          },
+          {
+            "usrId": "hieuha",
+            "usrNm": "Hieu Ha"
+          },
+          {
+            "usrId": "huongvo",
+            "usrNm": "Huong Vo"
+          },
+          {
+            "usrId": "huydang",
+            "usrNm": "Huy Dang"
+          },
+          {
+            "usrId": "huyxp",
+            "usrNm": "Huy Pham Xuan"
+          },
+          {
+            "usrId": "khangvo",
+            "usrNm": "Khang Vo"
+          },
+          {
+            "usrId": "minhdpn",
+            "usrNm": "Minh Do Phuong Nhat"
+          },
+          {
+            "usrId": "minhhoang",
+            "usrNm": "Minh Hoang"
+          },
+          {
+            "usrId": "mynh",
+            "usrNm": "My Nguyen Hong"
+          },
+          {
+            "usrId": "nhubhh",
+            "usrNm": "Nhu Bui Hoang Hoai"
+          },
+          {
+            "usrId": "nhutg",
+            "usrNm": "Nhu Tran Gia"
+          },
+          {
+            "usrId": "nhutvo",
+            "usrNm": "Nhut Vo"
+          },
+          {
+            "usrId": "phatlam",
+            "usrNm": "Phat Lam"
+          },
+          {
+            "usrId": "phatvu",
+            "usrNm": "Phat Vu"
+          },
+          {
+            "usrId": "phucbui",
+            "usrNm": "Phuc Bui"
+          },
+          {
+            "usrId": "taitieu",
+            "usrNm": "Tai Tieu"
+          },
+          {
+            "usrId": "tannnn",
+            "usrNm": "Tan Nguyen Ngo Nhat"
+          },
+          {
+            "usrId": "thaodo",
+            "usrNm": "Thao Do"
+          },
+          {
+            "usrId": "thaopham",
+            "usrNm": "Thao Pham"
+          },
+          {
+            "usrId": "tienle",
+            "usrNm": "Tien Le"
+          },
+          {
+            "usrId": "toantran",
+            "usrNm": "Toan Tran"
+          },
+          {
+            "usrId": "tructran",
+            "usrNm": "Truc Tran"
+          },
+          {
+            "usrId": "trunghoang",
+            "usrNm": "Trung Hoang"
+          },
+          {
+            "usrId": "tutran",
+            "usrNm": "Tu Tran"
+          },
+          {
+            "usrId": "tuanla",
+            "usrNm": "Tuan Le Anh"
+          },
+          {
+            "usrId": "yentkl",
+            "usrNm": "Yen Le Thi Kim"
+          },
+          {
+            "usrId": "yentran",
+            "usrNm": "Yen Tran"
+          }
+        ],
+        "className": "com.dou.pim.models.UserAssignVO",
+        "efrtPctNo": 5,
+        "estmDueDt": "{{date}}",
+        "endTmNo": 16,
+        "mode": 0,
+        "pctNo": 5,
+        "phsCd": "PIM_PHS_CDREC",
+        "phsNm": "Confirmation",
+        "plnDueDt": "{{date}}",
+        "plnStDt": "{{date}}",
+        "prntPhsCd": "PIM_PHS_CDREG",
+        "prntPhsId": "APP20230315000000017",
+        "procPhsId": "APP20230315000000018",
+        "rsrcRoleCd": "RID20141117000000001,RID20141202000000002,RID20200108000000001,RID20230118000000001",
+        "stTmNo": 14.87,
+        "strEndDt": "{{date}}",
+        "utPctNo": 100,
+        "wrkHrNo": 1.4,
+        "usrId": "taitieu",
+        "usrNm": "Tai Tieu"
+      },
+      {
+        "asgnList": [
+          {
+            "usrId": "annph",
+            "usrNm": "An Nguyen Phuc Hoan"
+          },
+          {
+            "usrId": "anhnxt",
+            "usrNm": "Anh Nguyen Xuan Thuan"
+          },
+          {
+            "usrId": "anhtranduc",
+            "usrNm": "Anh Tran Duc"
+          },
+          {
+            "usrId": "aole",
+            "usrNm": "Ao Le"
+          },
+          {
+            "usrId": "binhtn",
+            "usrNm": "Binh Thanh Nguyen"
+          },
+          {
+            "usrId": "bonnguyen",
+            "usrNm": "Bon Nguyen"
+          },
+          {
+            "usrId": "chaucao",
+            "usrNm": "Chau Cao"
+          },
+          {
+            "usrId": "chautv",
+            "usrNm": "Chau Tran Van"
+          },
+          {
+            "usrId": "cuongha",
+            "usrNm": "Cuong Ha"
+          },
+          {
+            "usrId": "cuongle",
+            "usrNm": "Cuong Le"
+          },
+          {
+            "usrId": "daiho",
+            "usrNm": "Dai Ho"
+          },
+          {
+            "usrId": "datduong",
+            "usrNm": "Dat Duong"
+          },
+          {
+            "usrId": "dientang",
+            "usrNm": "Dien Tang"
+          },
+          {
+            "usrId": "ducle",
+            "usrNm": "Duc Le"
+          },
+          {
+            "usrId": "dungtd",
+            "usrNm": "Dung Tran Duc"
+          },
+          {
+            "usrId": "duylc",
+            "usrNm": "Duy Le Cong"
+          },
+          {
+            "usrId": "duynq",
+            "usrNm": "Duy Nguyen Quoc"
+          },
+          {
+            "usrId": "duyennguyen",
+            "usrNm": "Duyen Nguyen"
+          },
+          {
+            "usrId": "duyenntn",
+            "usrNm": "Duyen Nguyen Thi Ngoc"
+          },
+          {
+            "usrId": "duyenpham",
+            "usrNm": "Duyen Pham"
+          },
+          {
+            "usrId": "duyentran",
+            "usrNm": "Duyen Tran"
+          },
+          {
+            "usrId": "hahuynh",
+            "usrNm": "Ha Huynh"
+          },
+          {
+            "usrId": "haidoan",
+            "usrNm": "Hai Doan"
+          },
+          {
+            "usrId": "haitt",
+            "usrNm": "Hai To Truong"
+          },
+          {
+            "usrId": "hangnld",
+            "usrNm": "Hang Nguyen Le Dieu"
+          },
+          {
+            "usrId": "hanhle",
+            "usrNm": "Hanh Le"
+          },
+          {
+            "usrId": "haont",
+            "usrNm": "Hao Nguyen Thi"
+          },
+          {
+            "usrId": "hautruong",
+            "usrNm": "Hau Truong"
+          },
+          {
+            "usrId": "hieuha",
+            "usrNm": "Hieu Ha"
+          },
+          {
+            "usrId": "hieutv",
+            "usrNm": "Hieu Truong Van"
+          },
+          {
+            "usrId": "hoangnx",
+            "usrNm": "Hoang Nguyen Xuan"
+          },
+          {
+            "usrId": "hoangpham",
+            "usrNm": "Hoang Pham"
+          },
+          {
+            "usrId": "hoangtk",
+            "usrNm": "Hoang Tran Khai"
+          },
+          {
+            "usrId": "hoile",
+            "usrNm": "Hoi Le"
+          },
+          {
+            "usrId": "hongnn",
+            "usrNm": "Hong Nguyen Ngoc"
+          },
+          {
+            "usrId": "huandiep",
+            "usrNm": "Huan Diep"
+          },
+          {
+            "usrId": "hungnv",
+            "usrNm": "Hung Nguyen Van"
+          },
+          {
+            "usrId": "hungphamminh",
+            "usrNm": "Hung Pham Minh"
+          },
+          {
+            "usrId": "huonglt",
+            "usrNm": "Huong Le Thi"
+          },
+          {
+            "usrId": "huongntn",
+            "usrNm": "Huong Nguyen Thi Ngoc"
+          },
+          {
+            "usrId": "huongvo",
+            "usrNm": "Huong Vo"
+          },
+          {
+            "usrId": "huydang",
+            "usrNm": "Huy Dang"
+          },
+          {
+            "usrId": "huyng",
+            "usrNm": "Huy Nguyen Gia"
+          },
+          {
+            "usrId": "huynq",
+            "usrNm": "Huy Nguyen Quoc"
+          },
+          {
+            "usrId": "huynv",
+            "usrNm": "Huy Nguyen Van"
+          },
+          {
+            "usrId": "huyxp",
+            "usrNm": "Huy Pham Xuan"
+          },
+          {
+            "usrId": "huyenphan",
+            "usrNm": "Huyen Phan"
+          },
+          {
+            "usrId": "khangduong",
+            "usrNm": "Khang Duong"
+          },
+          {
+            "usrId": "khangvo",
+            "usrNm": "Khang Vo"
+          },
+          {
+            "usrId": "khanhpham",
+            "usrNm": "Khanh Pham"
+          },
+          {
+            "usrId": "khiemhuynh",
+            "usrNm": "Khiem Huynh"
+          },
+          {
+            "usrId": "khoabn",
+            "usrNm": "Khoa Bui Nhat"
+          },
+          {
+            "usrId": "khoale",
+            "usrNm": "Khoa Le"
+          },
+          {
+            "usrId": "khoanguyen",
+            "usrNm": "Khoa Nguyen"
+          },
+          {
+            "usrId": "khoapd",
+            "usrNm": "Khoa Pham Dang"
+          },
+          {
+            "usrId": "khoinguyen",
+            "usrNm": "Khoi Nguyen"
+          },
+          {
+            "usrId": "lamtnh",
+            "usrNm": "Lam Tran Nhat Han"
+          },
+          {
+            "usrId": "anhlam",
+            "usrNm": "Lam Vo Van Anh"
+          },
+          {
+            "usrId": "lanpham",
+            "usrNm": "Lan Pham"
+          },
+          {
+            "usrId": "linhphan",
+            "usrNm": "Linh Phan"
+          },
+          {
+            "usrId": "longnguyen",
+            "usrNm": "Long Nguyen"
+          },
+          {
+            "usrId": "lunguyen",
+            "usrNm": "Lu Nguyen"
+          },
+          {
+            "usrId": "luathuynh",
+            "usrNm": "Luat Huynh"
+          },
+          {
+            "usrId": "maiptx",
+            "usrNm": "Mai Phan Thi Xuan"
+          },
+          {
+            "usrId": "minhdpn",
+            "usrNm": "Minh Do Phuong Nhat"
+          },
+          {
+            "usrId": "minhhoang",
+            "usrNm": "Minh Hoang"
+          },
+          {
+            "usrId": "mynh",
+            "usrNm": "My Nguyen Hong"
+          },
+          {
+            "usrId": "namnt",
+            "usrNm": "Nam Nguyen Thanh"
+          },
+          {
+            "usrId": "nganpham",
+            "usrNm": "Ngan Pham"
+          },
+          {
+            "usrId": "nghiandt",
+            "usrNm": "Nghia Nguyen Dang Trung"
+          },
+          {
+            "usrId": "ngoctran",
+            "usrNm": "Ngoc Tran"
+          },
+          {
+            "usrId": "nguyentm",
+            "usrNm": "Nguyen Tran Minh"
+          },
+          {
+            "usrId": "nhanhp",
+            "usrNm": "Nhan Hoang Phuc"
+          },
+          {
+            "usrId": "nhatnt",
+            "usrNm": "Nhat Nguyen Tuan"
+          },
+          {
+            "usrId": "nhubhh",
+            "usrNm": "Nhu Bui Hoang Hoai"
+          },
+          {
+            "usrId": "nhunguyen",
+            "usrNm": "Nhu Nguyen"
+          },
+          {
+            "usrId": "nhutg",
+            "usrNm": "Nhu Tran Gia"
+          },
+          {
+            "usrId": "nhutvo",
+            "usrNm": "Nhut Vo"
+          },
+          {
+            "usrId": "phatdo",
+            "usrNm": "Phat Do"
+          },
+          {
+            "usrId": "phatlam",
+            "usrNm": "Phat Lam"
+          },
+          {
+            "usrId": "phatvu",
+            "usrNm": "Phat Vu"
+          },
+          {
+            "usrId": "phatvuong",
+            "usrNm": "Phat Vuong"
+          },
+          {
+            "usrId": "phongtran",
+            "usrNm": "Phong Tran"
+          },
+          {
+            "usrId": "phunh",
+            "usrNm": "Phu Nguyen Hoang"
+          },
+          {
+            "usrId": "phunt",
+            "usrNm": "Phu Nguyen Trieu"
+          },
+          {
+            "usrId": "phucbui",
+            "usrNm": "Phuc Bui"
+          },
+          {
+            "usrId": "phuchuynh",
+            "usrNm": "Phuc Huynh"
+          },
+          {
+            "usrId": "phuongngo",
+            "usrNm": "Phuong Ngo"
+          },
+          {
+            "usrId": "quannk",
+            "usrNm": "Quan Nguyen Ky"
+          },
+          {
+            "usrId": "sangtnt",
+            "usrNm": "Sang Tran Nguyen Tan"
+          },
+          {
+            "usrId": "sonvuong",
+            "usrNm": "Son Vuong"
+          },
+          {
+            "usrId": "taitieu",
+            "usrNm": "Tai Tieu"
+          },
+          {
+            "usrId": "tannnn",
+            "usrNm": "Tan Nguyen Ngo Nhat"
+          },
+          {
+            "usrId": "thampham",
+            "usrNm": "Tham Pham"
+          },
+          {
+            "usrId": "thangng",
+            "usrNm": "Thang Nguyen"
+          },
+          {
+            "usrId": "thanhquach",
+            "usrNm": "Thanh Quach"
+          },
+          {
+            "usrId": "thanhtnp",
+            "usrNm": "Thanh Tran"
+          },
+          {
+            "usrId": "thaodo",
+            "usrNm": "Thao Do"
+          },
+          {
+            "usrId": "thaopham",
+            "usrNm": "Thao Pham"
+          },
+          {
+            "usrId": "thaoptt",
+            "usrNm": "Thao Pham Thi Thu"
+          },
+          {
+            "usrId": "thaotran",
+            "usrNm": "Thao Tran"
+          },
+          {
+            "usrId": "thienvq",
+            "usrNm": "Thien Vo Quoc"
+          },
+          {
+            "usrId": "thopham",
+            "usrNm": "Tho Pham"
+          },
+          {
+            "usrId": "thuvu",
+            "usrNm": "Thu Vu"
+          },
+          {
+            "usrId": "thuongle",
+            "usrNm": "Thuong Le"
+          },
+          {
+            "usrId": "tienle",
+            "usrNm": "Tien Le"
+          },
+          {
+            "usrId": "tieule",
+            "usrNm": "Tieu Le"
+          },
+          {
+            "usrId": "toando",
+            "usrNm": "Toan Do"
+          },
+          {
+            "usrId": "toannx",
+            "usrNm": "Toan Nguyen Xuan"
+          },
+          {
+            "usrId": "triphan",
+            "usrNm": "Tri Phan"
+          },
+          {
+            "usrId": "trieuhoang",
+            "usrNm": "Trieu Hoang"
+          },
+          {
+            "usrId": "trieuquang",
+            "usrNm": "Trieu Quang"
+          },
+          {
+            "usrId": "tructnn",
+            "usrNm": "Truc Thanh Ngoc Nguyen"
+          },
+          {
+            "usrId": "tructran",
+            "usrNm": "Truc Tran"
+          },
+          {
+            "usrId": "tructnh",
+            "usrNm": "Truc Tran Nguyen Hoang"
+          },
+          {
+            "usrId": "trungdinh",
+            "usrNm": "Trung Dinh"
+          },
+          {
+            "usrId": "trunghoang",
+            "usrNm": "Trung Hoang"
+          },
+          {
+            "usrId": "trungquach",
+            "usrNm": "Trung Quach"
+          },
+          {
+            "usrId": "truongnlq",
+            "usrNm": "Truong Nguyen Lam Quang"
+          },
+          {
+            "usrId": "truongnq",
+            "usrNm": "Truong Nguyen Quang"
+          },
+          {
+            "usrId": "truongtp",
+            "usrNm": "Truong Tran Phuc"
+          },
+          {
+            "usrId": "tuvu",
+            "usrNm": "Tu Vu"
+          },
+          {
+            "usrId": "tuanla",
+            "usrNm": "Tuan Le Anh"
+          },
+          {
+            "usrId": "tuantrinh",
+            "usrNm": "Tuan Trinh"
+          },
+          {
+            "usrId": "tungdt",
+            "usrNm": "Tung Do Thanh"
+          },
+          {
+            "usrId": "uttran",
+            "usrNm": "Ut Tran"
+          },
+          {
+            "usrId": "uyenlam",
+            "usrNm": "Uyen Lam"
+          },
+          {
+            "usrId": "viluu",
+            "usrNm": "Vi Luu"
+          },
+          {
+            "usrId": "vietdang",
+            "usrNm": "Viet Dang"
+          },
+          {
+            "usrId": "vinhduong",
+            "usrNm": "Vinh Duong"
+          },
+          {
+            "usrId": "vutran",
+            "usrNm": "Vu Tran"
+          },
+          {
+            "usrId": "vyngo",
+            "usrNm": "Vy Ngo"
+          },
+          {
+            "usrId": "yentkl",
+            "usrNm": "Yen Le Thi Kim"
+          },
+          {
+            "usrId": "yentran",
+            "usrNm": "Yen Tran"
+          }
+        ],
+        "className": "com.dou.pim.models.UserAssignVO",
+        "efrtPctNo": 85,
+        "estmDueDt": "{{date}}",
+        "endTmNo": 6,
+        "mode": 0,
+        "pctNo": 85,
+        "phsCd": "PIM_PHS_CDRPT",
+        "phsNm": "Reporting",
+        "plnDueDt": "{{date}}",
+        "plnStDt": "{{date}}",
+        "prntPhsCd": "PIM_PHS_CDREC",
+        "prntPhsId": "APP20230315000000018",
+        "procPhsId": "APP20230315000000019",
+        "rsrcRoleCd": "RID20141117000000001,RID20141202000000003,RID20230118000000001,RID20230118000000002",
+        "stTmNo": 16.27,
+        "strEndDt": "{{date}}",
+        "utPctNo": 100,
+        "wrkHrNo": 23.8,
+        "usrId": "tieule",
+        "usrNm": "Tieu Le"
+      },
+      {
+        "asgnList": [
+          {
+            "usrId": "cuongle",
+            "usrNm": "Cuong Le"
+          },
+          {
+            "usrId": "daiho",
+            "usrNm": "Dai Ho"
+          },
+          {
+            "usrId": "duyenpham",
+            "usrNm": "Duyen Pham"
+          },
+          {
+            "usrId": "hangnld",
+            "usrNm": "Hang Nguyen Le Dieu"
+          },
+          {
+            "usrId": "hanhle",
+            "usrNm": "Hanh Le"
+          },
+          {
+            "usrId": "hieuha",
+            "usrNm": "Hieu Ha"
+          },
+          {
+            "usrId": "huongvo",
+            "usrNm": "Huong Vo"
+          },
+          {
+            "usrId": "huydang",
+            "usrNm": "Huy Dang"
+          },
+          {
+            "usrId": "huyxp",
+            "usrNm": "Huy Pham Xuan"
+          },
+          {
+            "usrId": "khangvo",
+            "usrNm": "Khang Vo"
+          },
+          {
+            "usrId": "minhdpn",
+            "usrNm": "Minh Do Phuong Nhat"
+          },
+          {
+            "usrId": "mynh",
+            "usrNm": "My Nguyen Hong"
+          },
+          {
+            "usrId": "nhubhh",
+            "usrNm": "Nhu Bui Hoang Hoai"
+          },
+          {
+            "usrId": "nhutg",
+            "usrNm": "Nhu Tran Gia"
+          },
+          {
+            "usrId": "nhutvo",
+            "usrNm": "Nhut Vo"
+          },
+          {
+            "usrId": "phatvu",
+            "usrNm": "Phat Vu"
+          },
+          {
+            "usrId": "phucbui",
+            "usrNm": "Phuc Bui"
+          },
+          {
+            "usrId": "taitieu",
+            "usrNm": "Tai Tieu"
+          },
+          {
+            "usrId": "tannnn",
+            "usrNm": "Tan Nguyen Ngo Nhat"
+          },
+          {
+            "usrId": "thaodo",
+            "usrNm": "Thao Do"
+          },
+          {
+            "usrId": "thaopham",
+            "usrNm": "Thao Pham"
+          },
+          {
+            "usrId": "tienle",
+            "usrNm": "Tien Le"
+          },
+          {
+            "usrId": "toantran",
+            "usrNm": "Toan Tran"
+          },
+          {
+            "usrId": "tructran",
+            "usrNm": "Truc Tran"
+          },
+          {
+            "usrId": "tutran",
+            "usrNm": "Tu Tran"
+          },
+          {
+            "usrId": "yentkl",
+            "usrNm": "Yen Le Thi Kim"
+          },
+          {
+            "usrId": "yentran",
+            "usrNm": "Yen Tran"
+          }
+        ],
+        "className": "com.dou.pim.models.UserAssignVO",
+        "efrtPctNo": 5,
+        "estmDueDt": "{{date}}",
+        "mode": 0,
+        "pctNo": 5,
+        "phsCd": "PIM_PHS_CDFIN",
+        "phsNm": "Finish",
+        "plnDueDt": "{{date}}",
+        "plnStDt": "{{date}}",
+        "prntPhsCd": "PIM_PHS_CDRPT",
+        "prntPhsId": "APP20230315000000019",
+        "procPhsId": "APP20230315000000020",
+        "rsrcRoleCd": "RID20141202000000002,RID20200108000000001,RID20230118000000001",
+        "wrkHrNo": 1.4,
+        "usrId": "huyxp",
+        "usrNm": "Huy Pham Xuan"
+      }
+    ],
+    "pntNo": "30",
+    "plnDueDt": "{{date}}",
+    "plnStDt": "{{date}}",
+    "phsCd": "PIM_PHS_CDREG",
+    "rltTpCd": null,
+    "confFlg": "N"
+  },
+  "categoryList": {
+    "id": "PJT20230414000000001",
+    "open": false,
+    "value": "COM",
+    "className": "com.dou.adm.models.AdmPjtVO",
+    "pjtId": "PJT20230414000000001",
+    "prntPjtId": "PJT20230329000000002",
+    "pjtNm": "COM",
+    "mgrId": "tutran",
+    "pjtTpCd": "ADM_PJT_TPCAT",
+    "coCd": "DOU",
+    "rootPjtId": "PJT20220609000000001",
+    "ordNo": 2,
+    "mode": 0,
+    "$count": 0,
+    "$parent": "PJT20230329000000002",
+    "$level": 3
+  },
+  "flgRefer": "",
+  "arrRelated": []
+}

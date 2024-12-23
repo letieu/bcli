@@ -2,11 +2,10 @@ JIRA_URL="https://oneline.atlassian.net"
 JIRA_API_ENDPOINT="$JIRA_URL/rest/api/3/search"
 
 PROJECT="COM"
+source ./_env.sh
 
-USERNAME="xxx"
-API_TOKEN="XXX"
+JQL_QUERY="assignee=currentuser() AND project=COM AND createdDate>'$START_DATE' AND createdDate < '$END_DATE'"
 
-JQL_QUERY="assignee=currentuser() AND project=COM AND createdDate>'2024-10-30' AND createdDate < '2024-11-30'"
 ENCODED_JQL_QUERY=$(echo $JQL_QUERY | jq -sRr @uri)
 
 TASK_TEMPLATE=~/.bcli/templates/COM-code.json

@@ -1,0 +1,19 @@
+{
+  "usrId": "tieule",
+  "wrkDt": "{{.WrkDt}}",
+  "reqId": "{{.ReqId}}",
+  "pjtId": "PJT20220609000000001",
+  "subPjtId": "PJT20230329000000002",
+  "cmt": "",
+  "jbId": "JOB20220616000000001",
+  "phsCd": "PIM_PHS_CDRPT",
+  "phsNm": "Reporting",
+  "jbNm": "Development",
+  "wrkTm": "{{.WrkTm}}",
+  "dt": "{{.Dt}}",
+  "addSts": true,
+  "type": "actual",
+  "actEfrtMnt": {{.ActEfrtMnt}},
+  "cmtCtnt": "<div class=\"system-comment\">Added time worked:</div><div style=\"margin-left: 10px\"> <b><i> &nbsp; Phase Name: </i></b>Reporting</div><div style=\"margin-left: 10px\"> <b><i> &nbsp; Job Category: </i></b>Development</div><div style=\"margin-left: 10px\"> <b><i> &nbsp; Time Worked : </i></b>{{.WrkTm}} </div><div style=\"margin-left: 10px\"> <b><i> &nbsp; Date: </i></b>{{.Dt}}</div>",
+  "pstTpCd": "PST_TP_CDACT"
+}
