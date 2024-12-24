@@ -217,6 +217,18 @@ type UploadFileResponse struct {
 	BizFolder string   `json:"bizFolder"`
 }
 
+type submitTaskRequest struct {
+	ReqID        string `json:"reqId"`
+	PjtID        string `json:"pjtId"`
+	SubPjtID     string `json:"subPjtId"`
+	ArrUsr       string `json:"arrUsr"`
+	PjtNm        string `json:"pjtNm"`
+	SubjectEmail string `json:"subjectEmail"`
+	Comment      string `json:"comment"`
+	PstID        string `json:"pstId"`
+	CmtCtnt      string `json:"cmtCtnt"`
+}
+
 func ListTasks() ([]Task, error) {
 	url := baseURL + "/api/home/search-tasks"
 	method := "POST"
@@ -606,28 +618,27 @@ func UploadFile(
 		return UploadFileResponse{}, err
 	}
 
+	if res.StatusCode != 200 {
+		return UploadFileResponse{}, &ApiError{
+			Status:   res.Status,
+			Response: res,
+		}
+	}
 
-    if res.StatusCode != 200 {
-        return UploadFileResponse{}, &ApiError{
-            Status:   res.Status,
-            Response: res,
-        }
-    }
+	defer res.Body.Close()
 
-    defer res.Body.Close()
+	body, err := io.ReadAll(res.Body)
+	if err != nil {
+		return UploadFileResponse{}, err
+	}
 
-    body, err := io.ReadAll(res.Body)
-    if err != nil {
-        return UploadFileResponse{}, err
-    }
+	var uploadResponse UploadFileResponse
+	err = json.Unmarshal(body, &uploadResponse)
+	if err != nil {
+		return UploadFileResponse{}, err
+	}
 
-    var uploadResponse UploadFileResponse
-    err = json.Unmarshal(body, &uploadResponse)
-    if err != nil {
-        return UploadFileResponse{}, err
-    }
-
-    return uploadResponse, nil
+	return uploadResponse, nil
 }
 
 func AddFileToTask(
@@ -674,5 +685,91 @@ func AddFileToTask(
 	}
 
 	defer res.Body.Close()
+	return nil
+}
+
+func GenereateCommentKey() (string, error) {
+	url := baseURL + "/api/generate-comment-key"
+
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return "", err
+	}
+
+	req.Header.Set("Accept", "application/json, text/plain, */*")
+	req.Header.Set("Priority", "u=0")
+
+	res, err := authClient.Do(req)
+	if err != nil {
+		return "", err
+	}
+
+	defer res.Body.Close()
+	if res.StatusCode != 200 {
+		return "", &ApiError{
+			Status:   res.Status,
+			Response: res,
+		}
+	}
+
+	body, err := io.ReadAll(res.Body)
+	if err != nil {
+		return "", err
+	}
+
+	// parse json
+	var data map[string]interface{}
+	err = json.Unmarshal(body, &data)
+
+	if err != nil {
+		return "", err
+	}
+
+	return data["pstId"].(string), nil
+}
+
+func SubmitTask(
+	taskDetail getTaskDetailResponse,
+	pstId string,
+	comment string,
+) error {
+	url := baseURL + "/api/submitTask"
+
+	payload := submitTaskRequest{
+		ReqID:        taskDetail.DetailReqVO.ReqID,
+		PjtID:        taskDetail.DetailReqVO.PjtID,
+		SubPjtID:     taskDetail.DetailReqVO.SubPjtID,
+		ArrUsr:       "",
+		PjtNm:        "Chorus",
+		SubjectEmail: taskDetail.DetailReqVO.ReqTitNm,
+		Comment:      comment,
+		PstID:        pstId,
+		CmtCtnt:      comment,
+	}
+
+	jsonPayload, err := json.Marshal(payload)
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonPayload))
+	if err != nil {
+		return err
+	}
+
+	req.Header.Set("Accept", "application/json, text/plain, */*")
+	req.Header.Set("Content-Type", "application/json;charset=utf-8")
+	res, err := authClient.Do(req)
+
+	if err != nil {
+		return err
+	}
+
+	defer res.Body.Close()
+
+	if res.StatusCode != 200 {
+		fmt.Println(res.Request.Response)
+		return &ApiError{
+			Status:   res.Status,
+			Response: res,
+		}
+	}
+
 	return nil
 }

@@ -472,6 +472,51 @@ var branchName = &cobra.Command{
 	},
 }
 
+var submitCmd = &cobra.Command{
+	Use:   "submit",
+	Short: "Submit a task",
+	Long:  `Submit a task`,
+	Run: func(cmd *cobra.Command, args []string) {
+		if len(args) == 0 {
+			fmt.Println("Please provide a task ID")
+			return
+		}
+
+		comment, _ := cmd.Flags().GetString("comment")
+		if comment == "" {
+			fmt.Println("Please provide a comment")
+			return
+		}
+
+		taskId, err := getTaskId(args[0])
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		taskDetail, err := api.GetTaskDetail(taskId)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		cmtKey, err := api.GenereateCommentKey()
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		err = api.SubmitTask(taskDetail, cmtKey, comment)
+
+        if err != nil {
+            fmt.Println(err)
+            os.Exit(1)
+        }
+
+        fmt.Println("Task submitted")
+	},
+}
+
 func init() {
 	rootCmd.AddCommand(taskCmd)
 
@@ -484,6 +529,7 @@ func init() {
 	taskCmd.AddCommand(addPointCmd)
 	taskCmd.AddCommand(addTimeWorkCmd)
 	taskCmd.AddCommand(addFileCmd)
+	taskCmd.AddCommand(submitCmd)
 
 	listTaskCmd.Flags().BoolP("markdown", "m", false, "Render task list in markdown")
 	listTaskCmd.Flags().BoolP("simple", "s", false, "Render task list in simple mode")
@@ -522,6 +568,9 @@ func init() {
 	addFileCmd.MarkFlagRequired("file")
 
 	branchName.Flags().BoolP("checkout", "c", false, "Checkout branch")
+
+    submitCmd.Flags().StringP("comment", "c", "", "Comment")
+    submitCmd.MarkFlagRequired("comment")
 }
 
 func editInEditor(content string) (string, error) {
